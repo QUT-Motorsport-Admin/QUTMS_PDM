@@ -1,0 +1,324 @@
+
+PDM_v3.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000000  00800200  00800200  0000021c  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         000001c8  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .comment      00000030  00000000  00000000  0000021c  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  0000024c  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000028  00000000  00000000  0000028c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000d21  00000000  00000000  000002b4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000bfb  00000000  00000000  00000fd5  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000003e2  00000000  00000000  00001bd0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000034  00000000  00000000  00001fb4  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000576  00000000  00000000  00001fe8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000090  00000000  00000000  0000255e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000018  00000000  00000000  000025ee  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	71 c0       	rjmp	.+226    	; 0xe4 <__ctors_end>
+   2:	00 00       	nop
+   4:	77 c0       	rjmp	.+238    	; 0xf4 <__bad_interrupt>
+   6:	00 00       	nop
+   8:	75 c0       	rjmp	.+234    	; 0xf4 <__bad_interrupt>
+   a:	00 00       	nop
+   c:	73 c0       	rjmp	.+230    	; 0xf4 <__bad_interrupt>
+   e:	00 00       	nop
+  10:	71 c0       	rjmp	.+226    	; 0xf4 <__bad_interrupt>
+  12:	00 00       	nop
+  14:	6f c0       	rjmp	.+222    	; 0xf4 <__bad_interrupt>
+  16:	00 00       	nop
+  18:	6d c0       	rjmp	.+218    	; 0xf4 <__bad_interrupt>
+  1a:	00 00       	nop
+  1c:	6b c0       	rjmp	.+214    	; 0xf4 <__bad_interrupt>
+  1e:	00 00       	nop
+  20:	69 c0       	rjmp	.+210    	; 0xf4 <__bad_interrupt>
+  22:	00 00       	nop
+  24:	67 c0       	rjmp	.+206    	; 0xf4 <__bad_interrupt>
+  26:	00 00       	nop
+  28:	65 c0       	rjmp	.+202    	; 0xf4 <__bad_interrupt>
+  2a:	00 00       	nop
+  2c:	63 c0       	rjmp	.+198    	; 0xf4 <__bad_interrupt>
+  2e:	00 00       	nop
+  30:	61 c0       	rjmp	.+194    	; 0xf4 <__bad_interrupt>
+  32:	00 00       	nop
+  34:	5f c0       	rjmp	.+190    	; 0xf4 <__bad_interrupt>
+  36:	00 00       	nop
+  38:	5d c0       	rjmp	.+186    	; 0xf4 <__bad_interrupt>
+  3a:	00 00       	nop
+  3c:	5b c0       	rjmp	.+182    	; 0xf4 <__bad_interrupt>
+  3e:	00 00       	nop
+  40:	59 c0       	rjmp	.+178    	; 0xf4 <__bad_interrupt>
+  42:	00 00       	nop
+  44:	57 c0       	rjmp	.+174    	; 0xf4 <__bad_interrupt>
+  46:	00 00       	nop
+  48:	55 c0       	rjmp	.+170    	; 0xf4 <__bad_interrupt>
+  4a:	00 00       	nop
+  4c:	53 c0       	rjmp	.+166    	; 0xf4 <__bad_interrupt>
+  4e:	00 00       	nop
+  50:	51 c0       	rjmp	.+162    	; 0xf4 <__bad_interrupt>
+  52:	00 00       	nop
+  54:	4f c0       	rjmp	.+158    	; 0xf4 <__bad_interrupt>
+  56:	00 00       	nop
+  58:	4d c0       	rjmp	.+154    	; 0xf4 <__bad_interrupt>
+  5a:	00 00       	nop
+  5c:	4b c0       	rjmp	.+150    	; 0xf4 <__bad_interrupt>
+  5e:	00 00       	nop
+  60:	49 c0       	rjmp	.+146    	; 0xf4 <__bad_interrupt>
+  62:	00 00       	nop
+  64:	47 c0       	rjmp	.+142    	; 0xf4 <__bad_interrupt>
+  66:	00 00       	nop
+  68:	45 c0       	rjmp	.+138    	; 0xf4 <__bad_interrupt>
+  6a:	00 00       	nop
+  6c:	43 c0       	rjmp	.+134    	; 0xf4 <__bad_interrupt>
+  6e:	00 00       	nop
+  70:	41 c0       	rjmp	.+130    	; 0xf4 <__bad_interrupt>
+  72:	00 00       	nop
+  74:	3f c0       	rjmp	.+126    	; 0xf4 <__bad_interrupt>
+  76:	00 00       	nop
+  78:	3d c0       	rjmp	.+122    	; 0xf4 <__bad_interrupt>
+  7a:	00 00       	nop
+  7c:	3b c0       	rjmp	.+118    	; 0xf4 <__bad_interrupt>
+  7e:	00 00       	nop
+  80:	39 c0       	rjmp	.+114    	; 0xf4 <__bad_interrupt>
+  82:	00 00       	nop
+  84:	37 c0       	rjmp	.+110    	; 0xf4 <__bad_interrupt>
+  86:	00 00       	nop
+  88:	35 c0       	rjmp	.+106    	; 0xf4 <__bad_interrupt>
+  8a:	00 00       	nop
+  8c:	33 c0       	rjmp	.+102    	; 0xf4 <__bad_interrupt>
+  8e:	00 00       	nop
+  90:	31 c0       	rjmp	.+98     	; 0xf4 <__bad_interrupt>
+  92:	00 00       	nop
+  94:	2f c0       	rjmp	.+94     	; 0xf4 <__bad_interrupt>
+  96:	00 00       	nop
+  98:	2d c0       	rjmp	.+90     	; 0xf4 <__bad_interrupt>
+  9a:	00 00       	nop
+  9c:	2b c0       	rjmp	.+86     	; 0xf4 <__bad_interrupt>
+  9e:	00 00       	nop
+  a0:	29 c0       	rjmp	.+82     	; 0xf4 <__bad_interrupt>
+  a2:	00 00       	nop
+  a4:	27 c0       	rjmp	.+78     	; 0xf4 <__bad_interrupt>
+  a6:	00 00       	nop
+  a8:	25 c0       	rjmp	.+74     	; 0xf4 <__bad_interrupt>
+  aa:	00 00       	nop
+  ac:	23 c0       	rjmp	.+70     	; 0xf4 <__bad_interrupt>
+  ae:	00 00       	nop
+  b0:	21 c0       	rjmp	.+66     	; 0xf4 <__bad_interrupt>
+  b2:	00 00       	nop
+  b4:	1f c0       	rjmp	.+62     	; 0xf4 <__bad_interrupt>
+  b6:	00 00       	nop
+  b8:	1d c0       	rjmp	.+58     	; 0xf4 <__bad_interrupt>
+  ba:	00 00       	nop
+  bc:	1b c0       	rjmp	.+54     	; 0xf4 <__bad_interrupt>
+  be:	00 00       	nop
+  c0:	19 c0       	rjmp	.+50     	; 0xf4 <__bad_interrupt>
+  c2:	00 00       	nop
+  c4:	17 c0       	rjmp	.+46     	; 0xf4 <__bad_interrupt>
+  c6:	00 00       	nop
+  c8:	15 c0       	rjmp	.+42     	; 0xf4 <__bad_interrupt>
+  ca:	00 00       	nop
+  cc:	13 c0       	rjmp	.+38     	; 0xf4 <__bad_interrupt>
+  ce:	00 00       	nop
+  d0:	11 c0       	rjmp	.+34     	; 0xf4 <__bad_interrupt>
+  d2:	00 00       	nop
+  d4:	0f c0       	rjmp	.+30     	; 0xf4 <__bad_interrupt>
+  d6:	00 00       	nop
+  d8:	0d c0       	rjmp	.+26     	; 0xf4 <__bad_interrupt>
+  da:	00 00       	nop
+  dc:	0b c0       	rjmp	.+22     	; 0xf4 <__bad_interrupt>
+  de:	00 00       	nop
+  e0:	09 c0       	rjmp	.+18     	; 0xf4 <__bad_interrupt>
+	...
+
+000000e4 <__ctors_end>:
+  e4:	11 24       	eor	r1, r1
+  e6:	1f be       	out	0x3f, r1	; 63
+  e8:	cf ef       	ldi	r28, 0xFF	; 255
+  ea:	d1 e2       	ldi	r29, 0x21	; 33
+  ec:	de bf       	out	0x3e, r29	; 62
+  ee:	cd bf       	out	0x3d, r28	; 61
+  f0:	3a d0       	rcall	.+116    	; 0x166 <main>
+  f2:	68 c0       	rjmp	.+208    	; 0x1c4 <_exit>
+
+000000f4 <__bad_interrupt>:
+  f4:	85 cf       	rjmp	.-246    	; 0x0 <__vectors>
+
+000000f6 <init_PDM>:
+    }
+}
+
+void init_PDM(void)
+{
+	DDRA |= 0b00000001;		//PA0 - CAN_SS
+  f6:	08 9a       	sbi	0x01, 0	; 1
+	DDRB |= 0b10010110;		//PB7 PWM13; PB4 PWM10; PB2 MOSI; PB1 SCK
+  f8:	84 b1       	in	r24, 0x04	; 4
+  fa:	86 69       	ori	r24, 0x96	; 150
+  fc:	84 b9       	out	0x04, r24	; 4
+	DDRD |= 0b00000000;		//nil
+  fe:	8a b1       	in	r24, 0x0a	; 10
+ 100:	8a b9       	out	0x0a, r24	; 10
+	DDRE |= 0b00111011;		//PE5 PWM2; PE4 PWM1; PE3 PWM9; PE1 greenLED; PE0 amberLED
+ 102:	8d b1       	in	r24, 0x0d	; 13
+ 104:	8b 63       	ori	r24, 0x3B	; 59
+ 106:	8d b9       	out	0x0d, r24	; 13
+	DDRG |= 0b00100011;		//PG5 PWM12; PG1 HL34enable; PG0 HL34disable
+ 108:	83 b3       	in	r24, 0x13	; 19
+ 10a:	83 62       	ori	r24, 0x23	; 35
+ 10c:	83 bb       	out	0x13, r24	; 19
+	DDRH |= 0b01111000;		//PH6 PWM11; PH5 PWM4; PH3 PWM3; PH2 PWM7
+ 10e:	e1 e0       	ldi	r30, 0x01	; 1
+ 110:	f1 e0       	ldi	r31, 0x01	; 1
+ 112:	80 81       	ld	r24, Z
+ 114:	88 67       	ori	r24, 0x78	; 120
+ 116:	80 83       	st	Z, r24
+	DDRJ |= 0b00011000;		//PJ4 HL12disable; PJ3 HL12enable
+ 118:	e4 e0       	ldi	r30, 0x04	; 4
+ 11a:	f1 e0       	ldi	r31, 0x01	; 1
+ 11c:	80 81       	ld	r24, Z
+ 11e:	88 61       	ori	r24, 0x18	; 24
+ 120:	80 83       	st	Z, r24
+	DDRL |= 0b00111000;		//PL3 PWM6; PL2 PWM8; PL1 PWM5
+ 122:	ea e0       	ldi	r30, 0x0A	; 10
+ 124:	f1 e0       	ldi	r31, 0x01	; 1
+ 126:	80 81       	ld	r24, Z
+ 128:	88 63       	ori	r24, 0x38	; 56
+ 12a:	80 83       	st	Z, r24
+	
+	PORTA &= ~0b00000001;	//CAN_SS off
+ 12c:	10 98       	cbi	0x02, 0	; 2
+	PORTB &= ~0b10010110;	//PWMs off; MOSI off
+ 12e:	85 b1       	in	r24, 0x05	; 5
+ 130:	89 76       	andi	r24, 0x69	; 105
+ 132:	85 b9       	out	0x05, r24	; 5
+	PORTD &= ~0b11000000;	//HL34enable off; HL34disable on
+ 134:	8b b1       	in	r24, 0x0b	; 11
+ 136:	8f 73       	andi	r24, 0x3F	; 63
+ 138:	8b b9       	out	0x0b, r24	; 11
+	PORTE &= ~0b00111110;	//3 x PWMs off; LEDs off
+ 13a:	8e b1       	in	r24, 0x0e	; 14
+ 13c:	81 7c       	andi	r24, 0xC1	; 193
+ 13e:	8e b9       	out	0x0e, r24	; 14
+	PORTG &= ~0b00100011;	//PWM12 off
+ 140:	84 b3       	in	r24, 0x14	; 20
+ 142:	8c 7d       	andi	r24, 0xDC	; 220
+ 144:	84 bb       	out	0x14, r24	; 20
+	PORTH &= ~0b01111000;	//4 x PWMs off; HL34disable on; HL34enable off
+ 146:	e2 e0       	ldi	r30, 0x02	; 2
+ 148:	f1 e0       	ldi	r31, 0x01	; 1
+ 14a:	80 81       	ld	r24, Z
+ 14c:	87 78       	andi	r24, 0x87	; 135
+ 14e:	80 83       	st	Z, r24
+	PORTJ &= ~0b00011000;	//HL12disable on; HL12enable off
+ 150:	e5 e0       	ldi	r30, 0x05	; 5
+ 152:	f1 e0       	ldi	r31, 0x01	; 1
+ 154:	80 81       	ld	r24, Z
+ 156:	87 7e       	andi	r24, 0xE7	; 231
+ 158:	80 83       	st	Z, r24
+	PORTL &= ~0b00111000;	//3 x PWMs off
+ 15a:	eb e0       	ldi	r30, 0x0B	; 11
+ 15c:	f1 e0       	ldi	r31, 0x01	; 1
+ 15e:	80 81       	ld	r24, Z
+ 160:	87 7c       	andi	r24, 0xC7	; 199
+ 162:	80 83       	st	Z, r24
+ 164:	08 95       	ret
+
+00000166 <main>:
+void init_PDM(void);
+
+
+int main(void)
+{
+    init_PDM();
+ 166:	c7 df       	rcall	.-114    	; 0xf6 <init_PDM>
+	greenON;
+ 168:	71 9a       	sbi	0x0e, 1	; 14
+	HL12enableON;
+ 16a:	e5 e0       	ldi	r30, 0x05	; 5
+ 16c:	f1 e0       	ldi	r31, 0x01	; 1
+ 16e:	80 81       	ld	r24, Z
+ 170:	88 60       	ori	r24, 0x08	; 8
+ 172:	80 83       	st	Z, r24
+	HL34enableON;
+ 174:	a1 9a       	sbi	0x14, 1	; 20
+	HC1ON;			//chassis controller power on
+ 176:	e2 e0       	ldi	r30, 0x02	; 2
+ 178:	f1 e0       	ldi	r31, 0x01	; 1
+ 17a:	80 81       	ld	r24, Z
+ 17c:	80 61       	ori	r24, 0x10	; 16
+ 17e:	80 83       	st	Z, r24
+	HC2ON;			//BMS power on
+ 180:	75 9a       	sbi	0x0e, 5	; 14
+	HC3ON;			//shutdown positive on
+ 182:	74 9a       	sbi	0x0e, 4	; 14
+	HLchan2OFF;		//shutdown negative on
+ 184:	80 81       	ld	r24, Z
+ 186:	8f 7b       	andi	r24, 0xBF	; 191
+ 188:	80 83       	st	Z, r24
+	HLchan4ON;		//inverter power on
+ 18a:	2f 9a       	sbi	0x05, 7	; 5
+	HC8ON;			//steering wheel and radio power on
+ 18c:	eb e0       	ldi	r30, 0x0B	; 11
+ 18e:	f1 e0       	ldi	r31, 0x01	; 1
+ 190:	80 81       	ld	r24, Z
+ 192:	80 61       	ori	r24, 0x10	; 16
+ 194:	80 83       	st	Z, r24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 196:	2f ef       	ldi	r18, 0xFF	; 255
+ 198:	89 e6       	ldi	r24, 0x69	; 105
+ 19a:	98 e1       	ldi	r25, 0x18	; 24
+ 19c:	21 50       	subi	r18, 0x01	; 1
+ 19e:	80 40       	sbci	r24, 0x00	; 0
+ 1a0:	90 40       	sbci	r25, 0x00	; 0
+ 1a2:	e1 f7       	brne	.-8      	; 0x19c <main+0x36>
+ 1a4:	00 c0       	rjmp	.+0      	; 0x1a6 <main+0x40>
+ 1a6:	00 00       	nop
+    while (1) 
+    {
+		_delay_ms(500);
+		amberON;
+ 1a8:	70 9a       	sbi	0x0e, 0	; 14
+		greenOFF;
+ 1aa:	71 98       	cbi	0x0e, 1	; 14
+ 1ac:	2f ef       	ldi	r18, 0xFF	; 255
+ 1ae:	89 e6       	ldi	r24, 0x69	; 105
+ 1b0:	98 e1       	ldi	r25, 0x18	; 24
+ 1b2:	21 50       	subi	r18, 0x01	; 1
+ 1b4:	80 40       	sbci	r24, 0x00	; 0
+ 1b6:	90 40       	sbci	r25, 0x00	; 0
+ 1b8:	e1 f7       	brne	.-8      	; 0x1b2 <main+0x4c>
+ 1ba:	00 c0       	rjmp	.+0      	; 0x1bc <main+0x56>
+ 1bc:	00 00       	nop
+		_delay_ms(500);
+		amberOFF;
+ 1be:	70 98       	cbi	0x0e, 0	; 14
+		greenON;
+ 1c0:	71 9a       	sbi	0x0e, 1	; 14
+ 1c2:	e9 cf       	rjmp	.-46     	; 0x196 <main+0x30>
+
+000001c4 <_exit>:
+ 1c4:	f8 94       	cli
+
+000001c6 <__stop_program>:
+ 1c6:	ff cf       	rjmp	.-2      	; 0x1c6 <__stop_program>
