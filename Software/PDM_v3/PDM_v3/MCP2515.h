@@ -5,12 +5,12 @@
 #include <avr/io.h>
 #include <string.h>
 
-#define TRACTIVE_CAN_PORT_CS	PORTH	//pin 12
-#define POWER_CAN_PORT_CS		PORTJ	//pin 69
-#define DATA_CAN_PORT_CS		PORTB	//pin 19
-#define TRACTIVE_CAN_PIN_CS		PINH0	//pin 12
-#define POWER_CAN_PIN_CS		PINJ6	//pin 69
-#define DATA_CAN_PIN_CS			PINB0	//pin 19
+#define TRACTIVE_CAN_PORT_CS	PORTA	//pin 12
+#define POWER_CAN_PORT_CS		PORTA	//pin 69
+#define DATA_CAN_PORT_CS		PORTA	//pin 19
+#define TRACTIVE_CAN_PIN_CS		PINA0	//pin 12
+#define POWER_CAN_PIN_CS		PINA0	//pin 69
+#define DATA_CAN_PIN_CS			PINA0	//pin 19
 
 #define TRACTIVE_CAN	1
 #define POWER_CAN		2
