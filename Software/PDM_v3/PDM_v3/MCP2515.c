@@ -152,8 +152,8 @@ void MCP2515_PullCanPacket(uint8_t CANbus, uint8_t mob,uint8_t * numBytes , uint
 	*ID |= ((uint32_t)(tmpData[1]&0b00000011)<<16);
 	*ID |= ((uint32_t)(tmpData[2]&0b11111111)<<8);
 	*ID |= ((uint32_t)(tmpData[3]&0b11111111));
-	*numBytes = tmpData[12] & 0b00001111;
-	memcpy(data, &tmpData[4], *numBytes);	
+	*numBytes = tmpData[4] & 0b00001111;
+	memcpy(data, &tmpData[5], *numBytes);	
 	
 	MCP2515_CS_high(CANbus);				//raise CS.
 }

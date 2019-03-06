@@ -1,8 +1,9 @@
 /*
  * PDM_v3.c
  *
- * Created: 8/22/2018 9:05:36 AM
- * Author : Ant
+ * Updated : 6/03/2019 4:09:20 PM	
+ * Created : 8/22/2018 9:05:36 AM
+ * Authors : Zoe Goodward, Anthony Kellam
  */ 
 
 #define F_CPU 16000000UL
@@ -14,53 +15,40 @@
 #include "pdmCAN.h"
 #include "MCP2515.h"
 
+#define CAN_ID_PDM 0x09000001 /* CAN Bus Identifier for PDM */
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
-int main(void)
-{
-	
-	
-    io_init();
-	
+int main(void) {	
+    firmware_init();
+    sei();
+
+	//Permanently energised boards
+	board_init();
+
+    while(1) {
+		/* Wait for CAN interrupts */
+	}
+}
+
+void firmware_init(void) {
+	io_init();
     PCICR |= (1<<PCIE1); // Turning on PCIE1 bit in PCICR register
     PCMSK1 |= (1<<PCINT15); // Turning on the PCINT15 bit in PCMSK1 register
-
     SPI_init();
-    // Init CAN
     MCP2515_init(POWER_CAN);
-    sei();
-	
-	
-	
-	//greenON;
-	HL12enableON;
-	HL34enableON;
+}
+
+void board_init(void) {
+	//Permanently energised boards
+	HL12enableON;	// D1 of MC33932 - Disable state on: OUT1 & OUT2 are 3-state disabled  -  D1 input is used to 3-state disable the H-bridge outputs.
+	HL34enableON;	//
 	
 	HC1ON;			//chassis controller power on
 	HC2ON;			//BMS power on
-	HC3ON;			//shutdown positive on
-	HLchan2OFF;		//shutdown negative on
+	HC3ON;			//shutdown positive on - will be changed
+	HLchan2OFF;		//shutdown negative on - will be changed
 	HLchan4ON;		//inverter power on
 	HC8ON;			//steering wheel and radio power on
-	
-	//HC5ON;		// Fan RHS -- current testbench
-	HC4ON;			// Pump RHS -- currently on testbench
-	//HC7ON;		// Fan LHS
-	//HC6ON;		// Pump LHS
-	//HLchan1ON;	// Break Light
-
-	//amberON;
-    while (1) 
-    {
-		//MCP2515_FilterInit(uint8_t CANbus, uint8_t filterNum, uint32_t filterID);
-		//MCP2515_FilterInit(POWER_CAN, , )
-		//MCP2515_send_test(POWER_CAN);
-		//uint8_t inverterArray[8] = {0,255,245};
-		//MCP2515_TX(2, MCP2515_findFreeTxBuffer(POWER_CAN), 3, inverterArray, CAN_ID_INV);
-		//if (CHECK_BIT(PCIFR,1)) {
-		//	greenON;
-		//}
-    }
 }
 
 /**
@@ -77,8 +65,7 @@ int main(void)
  * Reference: ATmega Datasheet Chapter 13 (I/O-Ports)
  * 
  */
-void io_init(void)
-{
+void io_init(void) {
 	DDRA |= 0b00000001;		//PA0 - CAN_SS // chip select
 	DDRB |= 0b10010110;		//PB7 PWM13; PB4 PWM10; PB2 MOSI; PB1 SCK
 	DDRD |= 0b00000000;		//nil
@@ -100,20 +87,70 @@ void io_init(void)
 
 /**
  * @brief Called whenever CANBUS interrupt is triggered
- *        * When ever there is data waiting on CAN
- */
+ * CAN Packet 1
+ * Byte 1													| Byte 2			| Byte 3			| Byte 4			| Byte 5			|
+ * 0b  0,     0,     0,     0,     0,      0,     0,      0	| 0b00000000		| 0b00000000		| 0b00000000		| 0b00000000		|
+ * SHDN+, SHDN-, Siren, Brake, Fan L, Pump L, Fan R, Pump R	| Fan L PWM 0-100	| Pump L PWM 0-100 	| Fan R PWM 0-100	| Pump R PWM 0-100	|
+**/
 ISR(PCINT1_vect) {	
-	
-	greenON;
 	uint8_t data[8];
 	uint32_t ID;
 	uint8_t numBytes;
 	
 	CAN_pull_packet(POWER_CAN, &numBytes, data, &ID);
-	if (ID == 0x09000001) {
-		amberON;
+
+	if (ID == CAN_ID_PDM) {
+		if(numBytes > 3)
+		{	
+			greenON;
+		}
+		/* Byte 1 */
+		if (CHECK_BIT(data[0], 0)) { /* Pump RHS */
+			HC4ON;
+		} else {
+			HC4OFF;
+		} 
+		if (CHECK_BIT(data[0], 1)) { /* Fan RHS */
+			HC5ON;
+		} else {
+			HC5OFF;
+		}
+		if (CHECK_BIT(data[0], 2)) { /* Pump LHS */
+			HC6ON;
+		} else {
+			HC6OFF;
+		}
+		if (CHECK_BIT(data[0], 3)) { /* Fan LHS */
+			HC7ON;
+		} else {
+			HC7OFF;
+		}
+		if (CHECK_BIT(data[0], 4)) { /* Brake */
+			HLchan1ON;
+		} else {
+			HLchan1OFF;
+		}
+		if (CHECK_BIT(data[0], 5)) {  /* Siren */
+			HC9ON;
+		} else {
+			HC9OFF;
+		}
+		if (CHECK_BIT(data[0], 6)) { /* Shutdown - On */
+			HLchan2OFF;
+		} else {
+			HLchan2ON; // Test?
+		}
+		if (CHECK_BIT(data[0], 7)) { /* Shutdown + On */
+			HC3ON;
+		} else {
+			HC3OFF;
+		}
+		/* Byte 2 */
+
+		/* Byte 3 */
+
+		/* Byte 4 */
+
+		/* Byte 5 */
 	}
-	//if (data[0] == 0xEF) {
-		//HLchan1ON;
-	//}
 }
