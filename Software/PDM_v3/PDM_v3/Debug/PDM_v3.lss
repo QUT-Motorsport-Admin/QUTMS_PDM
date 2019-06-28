@@ -3,29 +3,29 @@ PDM_v3.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800200  00800200  0000054e  2**0
+  0 .data         00000000  00800200  00800200  0000060a  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         000004fa  00000000  00000000  00000054  2**1
+  1 .text         000005b6  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  0000054e  2**0
+  2 .comment      00000030  00000000  00000000  0000060a  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000580  2**2
+  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  0000063c  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000120  00000000  00000000  000005c0  2**0
+  4 .debug_aranges 00000130  00000000  00000000  0000067c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00001f7e  00000000  00000000  000006e0  2**0
+  5 .debug_info   00001fc1  00000000  00000000  000007ac  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000ef3  00000000  00000000  0000265e  2**0
+  6 .debug_abbrev 00000f0d  00000000  00000000  0000276d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000b06  00000000  00000000  00003551  2**0
+  7 .debug_line   00000bc2  00000000  00000000  0000367a  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000424  00000000  00000000  00004058  2**2
+  8 .debug_frame  00000444  00000000  00000000  0000423c  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000795  00000000  00000000  0000447c  2**0
+  9 .debug_str    000007ae  00000000  00000000  00004680  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000118c  00000000  00000000  00004c11  2**0
+ 10 .debug_loc    0000118c  00000000  00000000  00004e2e  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 000000e0  00000000  00000000  00005d9d  2**0
+ 11 .debug_ranges 000000f0  00000000  00000000  00005fba  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -51,7 +51,7 @@ Disassembly of section .text:
   22:	00 00       	nop
   24:	67 c0       	rjmp	.+206    	; 0xf4 <__bad_interrupt>
   26:	00 00       	nop
-  28:	c7 c0       	rjmp	.+398    	; 0x1b8 <__vector_10>
+  28:	c8 c0       	rjmp	.+400    	; 0x1ba <__vector_10>
   2a:	00 00       	nop
   2c:	63 c0       	rjmp	.+198    	; 0xf4 <__bad_interrupt>
   2e:	00 00       	nop
@@ -153,201 +153,207 @@ Disassembly of section .text:
   ea:	d1 e2       	ldi	r29, 0x21	; 33
   ec:	de bf       	out	0x3e, r29	; 62
   ee:	cd bf       	out	0x3d, r28	; 61
-  f0:	3a d0       	rcall	.+116    	; 0x166 <main>
-  f2:	01 c2       	rjmp	.+1026   	; 0x4f6 <_exit>
+  f0:	60 d0       	rcall	.+192    	; 0x1b2 <main>
+  f2:	5f c2       	rjmp	.+1214   	; 0x5b2 <_exit>
 
 000000f4 <__bad_interrupt>:
   f4:	85 cf       	rjmp	.-246    	; 0x0 <__vectors>
 
-000000f6 <io_init>:
+000000f6 <board_init>:
+    MCP2515_init(POWER_CAN);
+}
+
+void board_init(void) {
+	//Permanently energised boards
+	HL12enableON;	// D1 of MC33932 - Disable state on: OUT1 & OUT2 are 3-state disabled  -  D1 input is used to 3-state disable the H-bridge outputs.
+  f6:	e5 e0       	ldi	r30, 0x05	; 5
+  f8:	f1 e0       	ldi	r31, 0x01	; 1
+  fa:	80 81       	ld	r24, Z
+  fc:	88 60       	ori	r24, 0x08	; 8
+  fe:	80 83       	st	Z, r24
+	HL34enableON;	//
+ 100:	a1 9a       	sbi	0x14, 1	; 20
+	
+	HC1ON;			//chassis controller power on
+ 102:	e2 e0       	ldi	r30, 0x02	; 2
+ 104:	f1 e0       	ldi	r31, 0x01	; 1
+ 106:	80 81       	ld	r24, Z
+ 108:	80 61       	ori	r24, 0x10	; 16
+ 10a:	80 83       	st	Z, r24
+	HC2ON;			//BMS power on
+ 10c:	75 9a       	sbi	0x0e, 5	; 14
+	HC3ON;			//shutdown positive on - will be changed
+ 10e:	74 9a       	sbi	0x0e, 4	; 14
+	HLchan2OFF;		//shutdown negative on - will be changed
+ 110:	80 81       	ld	r24, Z
+ 112:	8f 7b       	andi	r24, 0xBF	; 191
+ 114:	80 83       	st	Z, r24
+	HLchan4ON;		//inverter power on
+ 116:	2f 9a       	sbi	0x05, 7	; 5
+	HC8ON;			//steering wheel and radio power on
+ 118:	eb e0       	ldi	r30, 0x0B	; 11
+ 11a:	f1 e0       	ldi	r31, 0x01	; 1
+ 11c:	80 81       	ld	r24, Z
+ 11e:	80 61       	ori	r24, 0x10	; 16
+ 120:	80 83       	st	Z, r24
+ 122:	08 95       	ret
+
+00000124 <io_init>:
+ * 
  * Reference: ATmega Datasheet Chapter 13 (I/O-Ports)
  * 
  */
-void io_init(void)
-{
+void io_init(void) {
 	DDRA |= 0b00000001;		//PA0 - CAN_SS // chip select
-  f6:	08 9a       	sbi	0x01, 0	; 1
+ 124:	08 9a       	sbi	0x01, 0	; 1
 	DDRB |= 0b10010110;		//PB7 PWM13; PB4 PWM10; PB2 MOSI; PB1 SCK
-  f8:	84 b1       	in	r24, 0x04	; 4
-  fa:	86 69       	ori	r24, 0x96	; 150
-  fc:	84 b9       	out	0x04, r24	; 4
+ 126:	84 b1       	in	r24, 0x04	; 4
+ 128:	86 69       	ori	r24, 0x96	; 150
+ 12a:	84 b9       	out	0x04, r24	; 4
 	DDRD |= 0b00000000;		//nil
-  fe:	8a b1       	in	r24, 0x0a	; 10
- 100:	8a b9       	out	0x0a, r24	; 10
+ 12c:	8a b1       	in	r24, 0x0a	; 10
+ 12e:	8a b9       	out	0x0a, r24	; 10
 	DDRE |= 0b00111011;		//PE5 PWM2; PE4 PWM1; PE3 PWM9; PE1 greenLED; PE0 amberLED
- 102:	8d b1       	in	r24, 0x0d	; 13
- 104:	8b 63       	ori	r24, 0x3B	; 59
- 106:	8d b9       	out	0x0d, r24	; 13
+ 130:	8d b1       	in	r24, 0x0d	; 13
+ 132:	8b 63       	ori	r24, 0x3B	; 59
+ 134:	8d b9       	out	0x0d, r24	; 13
 	DDRG |= 0b00100011;		//PG5 PWM12; PG1 HL34enable; PG0 HL34disable
- 108:	83 b3       	in	r24, 0x13	; 19
- 10a:	83 62       	ori	r24, 0x23	; 35
- 10c:	83 bb       	out	0x13, r24	; 19
+ 136:	83 b3       	in	r24, 0x13	; 19
+ 138:	83 62       	ori	r24, 0x23	; 35
+ 13a:	83 bb       	out	0x13, r24	; 19
 	DDRH |= 0b01111000;		//PH6 PWM11; PH5 PWM4; PH3 PWM3; PH2 PWM7
- 10e:	e1 e0       	ldi	r30, 0x01	; 1
- 110:	f1 e0       	ldi	r31, 0x01	; 1
- 112:	80 81       	ld	r24, Z
- 114:	88 67       	ori	r24, 0x78	; 120
- 116:	80 83       	st	Z, r24
+ 13c:	e1 e0       	ldi	r30, 0x01	; 1
+ 13e:	f1 e0       	ldi	r31, 0x01	; 1
+ 140:	80 81       	ld	r24, Z
+ 142:	88 67       	ori	r24, 0x78	; 120
+ 144:	80 83       	st	Z, r24
 	DDRJ |= 0b00011000;		//PJ4 HL12disable; PJ3 HL12enable
- 118:	e4 e0       	ldi	r30, 0x04	; 4
- 11a:	f1 e0       	ldi	r31, 0x01	; 1
- 11c:	80 81       	ld	r24, Z
- 11e:	88 61       	ori	r24, 0x18	; 24
- 120:	80 83       	st	Z, r24
-	DDRL |= 0b00111000;		//PL3 PWM6; PL2 PWM8; PL1 PWM5
- 122:	ea e0       	ldi	r30, 0x0A	; 10
- 124:	f1 e0       	ldi	r31, 0x01	; 1
- 126:	80 81       	ld	r24, Z
- 128:	88 63       	ori	r24, 0x38	; 56
- 12a:	80 83       	st	Z, r24
-	
-	PORTA &= ~0b00000001;	//CAN_SS off
- 12c:	10 98       	cbi	0x02, 0	; 2
-	PORTB &= ~0b10010110;	//PWMs off; MOSI off
- 12e:	85 b1       	in	r24, 0x05	; 5
- 130:	89 76       	andi	r24, 0x69	; 105
- 132:	85 b9       	out	0x05, r24	; 5
-	PORTD &= ~0b11000000;	//HL34enable off; HL34disable on
- 134:	8b b1       	in	r24, 0x0b	; 11
- 136:	8f 73       	andi	r24, 0x3F	; 63
- 138:	8b b9       	out	0x0b, r24	; 11
-	PORTE &= ~0b00111110;	//3 x PWMs off; LEDs off
- 13a:	8e b1       	in	r24, 0x0e	; 14
- 13c:	81 7c       	andi	r24, 0xC1	; 193
- 13e:	8e b9       	out	0x0e, r24	; 14
-	PORTG &= ~0b00100011;	//PWM12 off
- 140:	84 b3       	in	r24, 0x14	; 20
- 142:	8c 7d       	andi	r24, 0xDC	; 220
- 144:	84 bb       	out	0x14, r24	; 20
-	PORTH &= ~0b01111000;	//4 x PWMs off; HL34disable on; HL34enable off
- 146:	e2 e0       	ldi	r30, 0x02	; 2
+ 146:	e4 e0       	ldi	r30, 0x04	; 4
  148:	f1 e0       	ldi	r31, 0x01	; 1
  14a:	80 81       	ld	r24, Z
- 14c:	87 78       	andi	r24, 0x87	; 135
+ 14c:	88 61       	ori	r24, 0x18	; 24
  14e:	80 83       	st	Z, r24
-	PORTJ &= ~0b00011000;	//HL12disable on; HL12enable off
- 150:	e5 e0       	ldi	r30, 0x05	; 5
+	DDRL |= 0b00111000;		//PL3 PWM6; PL2 PWM8; PL1 PWM5
+ 150:	ea e0       	ldi	r30, 0x0A	; 10
  152:	f1 e0       	ldi	r31, 0x01	; 1
  154:	80 81       	ld	r24, Z
- 156:	87 7e       	andi	r24, 0xE7	; 231
+ 156:	88 63       	ori	r24, 0x38	; 56
  158:	80 83       	st	Z, r24
+	
+	PORTA &= ~0b00000001;	//CAN_SS off
+ 15a:	10 98       	cbi	0x02, 0	; 2
+	PORTB &= ~0b10010110;	//PWMs off; MOSI off
+ 15c:	85 b1       	in	r24, 0x05	; 5
+ 15e:	89 76       	andi	r24, 0x69	; 105
+ 160:	85 b9       	out	0x05, r24	; 5
+	PORTD &= ~0b11000000;	//HL34enable off; HL34disable on
+ 162:	8b b1       	in	r24, 0x0b	; 11
+ 164:	8f 73       	andi	r24, 0x3F	; 63
+ 166:	8b b9       	out	0x0b, r24	; 11
+	PORTE &= ~0b00111110;	//3 x PWMs off; LEDs off
+ 168:	8e b1       	in	r24, 0x0e	; 14
+ 16a:	81 7c       	andi	r24, 0xC1	; 193
+ 16c:	8e b9       	out	0x0e, r24	; 14
+	PORTG &= ~0b00100011;	//PWM12 off
+ 16e:	84 b3       	in	r24, 0x14	; 20
+ 170:	8c 7d       	andi	r24, 0xDC	; 220
+ 172:	84 bb       	out	0x14, r24	; 20
+	PORTH &= ~0b01111000;	//4 x PWMs off; HL34disable on; HL34enable off
+ 174:	e2 e0       	ldi	r30, 0x02	; 2
+ 176:	f1 e0       	ldi	r31, 0x01	; 1
+ 178:	80 81       	ld	r24, Z
+ 17a:	87 78       	andi	r24, 0x87	; 135
+ 17c:	80 83       	st	Z, r24
+	PORTJ &= ~0b00011000;	//HL12disable on; HL12enable off
+ 17e:	e5 e0       	ldi	r30, 0x05	; 5
+ 180:	f1 e0       	ldi	r31, 0x01	; 1
+ 182:	80 81       	ld	r24, Z
+ 184:	87 7e       	andi	r24, 0xE7	; 231
+ 186:	80 83       	st	Z, r24
 	PORTL &= ~0b00111000;	//3 x PWMs off
- 15a:	eb e0       	ldi	r30, 0x0B	; 11
- 15c:	f1 e0       	ldi	r31, 0x01	; 1
- 15e:	80 81       	ld	r24, Z
- 160:	87 7c       	andi	r24, 0xC7	; 199
- 162:	80 83       	st	Z, r24
- 164:	08 95       	ret
+ 188:	eb e0       	ldi	r30, 0x0B	; 11
+ 18a:	f1 e0       	ldi	r31, 0x01	; 1
+ 18c:	80 81       	ld	r24, Z
+ 18e:	87 7c       	andi	r24, 0xC7	; 199
+ 190:	80 83       	st	Z, r24
+ 192:	08 95       	ret
 
-00000166 <main>:
+00000194 <firmware_init>:
+		/* Wait for CAN interrupts */
+	}
+}
 
-int main(void)
-{
-	
-	
-    io_init();
- 166:	c7 df       	rcall	.-114    	; 0xf6 <io_init>
-	
+void firmware_init(void) {
+	io_init();
+ 194:	c7 df       	rcall	.-114    	; 0x124 <io_init>
     PCICR |= (1<<PCIE1); // Turning on PCIE1 bit in PCICR register
- 168:	e8 e6       	ldi	r30, 0x68	; 104
- 16a:	f0 e0       	ldi	r31, 0x00	; 0
- 16c:	80 81       	ld	r24, Z
- 16e:	82 60       	ori	r24, 0x02	; 2
- 170:	80 83       	st	Z, r24
+ 196:	e8 e6       	ldi	r30, 0x68	; 104
+ 198:	f0 e0       	ldi	r31, 0x00	; 0
+ 19a:	80 81       	ld	r24, Z
+ 19c:	82 60       	ori	r24, 0x02	; 2
+ 19e:	80 83       	st	Z, r24
     PCMSK1 |= (1<<PCINT15); // Turning on the PCINT15 bit in PCMSK1 register
- 172:	ec e6       	ldi	r30, 0x6C	; 108
- 174:	f0 e0       	ldi	r31, 0x00	; 0
- 176:	80 81       	ld	r24, Z
- 178:	80 68       	ori	r24, 0x80	; 128
-
+ 1a0:	ec e6       	ldi	r30, 0x6C	; 108
+ 1a2:	f0 e0       	ldi	r31, 0x00	; 0
+ 1a4:	80 81       	ld	r24, Z
+ 1a6:	80 68       	ori	r24, 0x80	; 128
     SPI_init();
- 17a:	80 83       	st	Z, r24
-    // Init CAN
+ 1a8:	80 83       	st	Z, r24
     MCP2515_init(POWER_CAN);
- 17c:	ad d1       	rcall	.+858    	; 0x4d8 <SPI_init>
- 17e:	82 e0       	ldi	r24, 0x02	; 2
- 180:	b4 d0       	rcall	.+360    	; 0x2ea <MCP2515_init>
+ 1aa:	f4 d1       	rcall	.+1000   	; 0x594 <SPI_init>
+ 1ac:	82 e0       	ldi	r24, 0x02	; 2
+ 1ae:	fb c0       	rjmp	.+502    	; 0x3a6 <MCP2515_init>
+ 1b0:	08 95       	ret
+
+000001b2 <main>:
+
+#define CAN_ID_PDM 0x09000001 /* CAN Bus Identifier for PDM */
+#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
+
+int main(void) {	
+    firmware_init();
+ 1b2:	f0 df       	rcall	.-32     	; 0x194 <firmware_init>
     sei();
- 182:	78 94       	sei
-	
-	
-	
-	//greenON;
-	HL12enableON;
- 184:	e5 e0       	ldi	r30, 0x05	; 5
- 186:	f1 e0       	ldi	r31, 0x01	; 1
- 188:	80 81       	ld	r24, Z
- 18a:	88 60       	ori	r24, 0x08	; 8
- 18c:	80 83       	st	Z, r24
-	HL34enableON;
- 18e:	a1 9a       	sbi	0x14, 1	; 20
-	
-	HC1ON;			//chassis controller power on
- 190:	e2 e0       	ldi	r30, 0x02	; 2
- 192:	f1 e0       	ldi	r31, 0x01	; 1
- 194:	80 81       	ld	r24, Z
- 196:	80 61       	ori	r24, 0x10	; 16
- 198:	80 83       	st	Z, r24
-	HC2ON;			//BMS power on
- 19a:	75 9a       	sbi	0x0e, 5	; 14
-	HC3ON;			//shutdown positive on
- 19c:	74 9a       	sbi	0x0e, 4	; 14
-	HLchan2OFF;		//shutdown negative on
- 19e:	80 81       	ld	r24, Z
- 1a0:	8f 7b       	andi	r24, 0xBF	; 191
- 1a2:	80 83       	st	Z, r24
-	HLchan4ON;		//inverter power on
- 1a4:	2f 9a       	sbi	0x05, 7	; 5
-	HC8ON;			//steering wheel and radio power on
- 1a6:	ab e0       	ldi	r26, 0x0B	; 11
- 1a8:	b1 e0       	ldi	r27, 0x01	; 1
- 1aa:	8c 91       	ld	r24, X
- 1ac:	80 61       	ori	r24, 0x10	; 16
- 1ae:	8c 93       	st	X, r24
-	
-	//HC5ON;		// Fan RHS -- current testbench
-	HC4ON;			// Pump RHS -- currently on testbench
- 1b0:	80 81       	ld	r24, Z
- 1b2:	80 62       	ori	r24, 0x20	; 32
- 1b4:	80 83       	st	Z, r24
- 1b6:	ff cf       	rjmp	.-2      	; 0x1b6 <main+0x50>
 
-000001b8 <__vector_10>:
+	//Permanently energised boards
+	board_init();
+ 1b4:	78 94       	sei
+ 1b6:	9f df       	rcall	.-194    	; 0xf6 <board_init>
+ 1b8:	ff cf       	rjmp	.-2      	; 0x1b8 <main+0x6>
 
-/**
- * @brief Called whenever CANBUS interrupt is triggered
- *        * When ever there is data waiting on CAN
- */
+000001ba <__vector_10>:
+ * CAN Packet 1
+ * Byte 1													| Byte 2			| Byte 3			| Byte 4			| Byte 5			|
+ * 0b  0,     0,     0,     0,     0,      0,     0,      0	| 0b00000000		| 0b00000000		| 0b00000000		| 0b00000000		|
+ * SHDN+, SHDN-, Siren, Brake, Fan L, Pump L, Fan R, Pump R	| Fan L PWM 0-100	| Pump L PWM 0-100 	| Fan R PWM 0-100	| Pump R PWM 0-100	|
+**/
 ISR(PCINT1_vect) {	
- 1b8:	1f 92       	push	r1
- 1ba:	0f 92       	push	r0
- 1bc:	0f b6       	in	r0, 0x3f	; 63
- 1be:	0f 92       	push	r0
- 1c0:	11 24       	eor	r1, r1
- 1c2:	0b b6       	in	r0, 0x3b	; 59
- 1c4:	0f 92       	push	r0
- 1c6:	2f 93       	push	r18
- 1c8:	3f 93       	push	r19
- 1ca:	4f 93       	push	r20
- 1cc:	5f 93       	push	r21
- 1ce:	6f 93       	push	r22
- 1d0:	7f 93       	push	r23
- 1d2:	8f 93       	push	r24
- 1d4:	9f 93       	push	r25
- 1d6:	af 93       	push	r26
- 1d8:	bf 93       	push	r27
- 1da:	ef 93       	push	r30
- 1dc:	ff 93       	push	r31
- 1de:	cf 93       	push	r28
- 1e0:	df 93       	push	r29
- 1e2:	cd b7       	in	r28, 0x3d	; 61
- 1e4:	de b7       	in	r29, 0x3e	; 62
- 1e6:	2d 97       	sbiw	r28, 0x0d	; 13
- 1e8:	de bf       	out	0x3e, r29	; 62
- 1ea:	cd bf       	out	0x3d, r28	; 61
-	
-	greenON;
- 1ec:	71 9a       	sbi	0x0e, 1	; 14
+ 1ba:	1f 92       	push	r1
+ 1bc:	0f 92       	push	r0
+ 1be:	0f b6       	in	r0, 0x3f	; 63
+ 1c0:	0f 92       	push	r0
+ 1c2:	11 24       	eor	r1, r1
+ 1c4:	0b b6       	in	r0, 0x3b	; 59
+ 1c6:	0f 92       	push	r0
+ 1c8:	2f 93       	push	r18
+ 1ca:	3f 93       	push	r19
+ 1cc:	4f 93       	push	r20
+ 1ce:	5f 93       	push	r21
+ 1d0:	6f 93       	push	r22
+ 1d2:	7f 93       	push	r23
+ 1d4:	8f 93       	push	r24
+ 1d6:	9f 93       	push	r25
+ 1d8:	af 93       	push	r26
+ 1da:	bf 93       	push	r27
+ 1dc:	ef 93       	push	r30
+ 1de:	ff 93       	push	r31
+ 1e0:	cf 93       	push	r28
+ 1e2:	df 93       	push	r29
+ 1e4:	cd b7       	in	r28, 0x3d	; 61
+ 1e6:	de b7       	in	r29, 0x3e	; 62
+ 1e8:	2d 97       	sbiw	r28, 0x0d	; 13
+ 1ea:	de bf       	out	0x3e, r29	; 62
+ 1ec:	cd bf       	out	0x3d, r28	; 61
 	uint8_t data[8];
 	uint32_t ID;
 	uint8_t numBytes;
@@ -363,8 +369,8 @@ ISR(PCINT1_vect) {
  1fc:	63 5f       	subi	r22, 0xF3	; 243
  1fe:	7f 4f       	sbci	r23, 0xFF	; 255
  200:	82 e0       	ldi	r24, 0x02	; 2
- 202:	29 d1       	rcall	.+594    	; 0x456 <CAN_pull_packet>
-	if (ID == 0x09000001) {
+ 202:	87 d1       	rcall	.+782    	; 0x512 <CAN_pull_packet>
+	if (ID == CAN_ID_PDM) {
  204:	89 85       	ldd	r24, Y+9	; 0x09
  206:	9a 85       	ldd	r25, Y+10	; 0x0a
  208:	ab 85       	ldd	r26, Y+11	; 0x0b
@@ -372,465 +378,604 @@ ISR(PCINT1_vect) {
  20c:	01 97       	sbiw	r24, 0x01	; 1
  20e:	a1 05       	cpc	r26, r1
  210:	b9 40       	sbci	r27, 0x09	; 9
- 212:	09 f4       	brne	.+2      	; 0x216 <__vector_10+0x5e>
-		amberON;
- 214:	70 9a       	sbi	0x0e, 0	; 14
-	}
-	//if (data[0] == 0xEF) {
-		//HLchan1ON;
-	//}
- 216:	2d 96       	adiw	r28, 0x0d	; 13
- 218:	0f b6       	in	r0, 0x3f	; 63
- 21a:	f8 94       	cli
- 21c:	de bf       	out	0x3e, r29	; 62
- 21e:	0f be       	out	0x3f, r0	; 63
- 220:	cd bf       	out	0x3d, r28	; 61
- 222:	df 91       	pop	r29
- 224:	cf 91       	pop	r28
- 226:	ff 91       	pop	r31
- 228:	ef 91       	pop	r30
- 22a:	bf 91       	pop	r27
- 22c:	af 91       	pop	r26
- 22e:	9f 91       	pop	r25
- 230:	8f 91       	pop	r24
- 232:	7f 91       	pop	r23
- 234:	6f 91       	pop	r22
- 236:	5f 91       	pop	r21
- 238:	4f 91       	pop	r20
- 23a:	3f 91       	pop	r19
- 23c:	2f 91       	pop	r18
- 23e:	0f 90       	pop	r0
- 240:	0b be       	out	0x3b, r0	; 59
- 242:	0f 90       	pop	r0
- 244:	0f be       	out	0x3f, r0	; 63
- 246:	0f 90       	pop	r0
- 248:	1f 90       	pop	r1
- 24a:	18 95       	reti
+ 212:	09 f0       	breq	.+2      	; 0x216 <__vector_10+0x5c>
+ 214:	5e c0       	rjmp	.+188    	; 0x2d2 <__vector_10+0x118>
+		if(numBytes > 3) {	
+ 216:	8d 85       	ldd	r24, Y+13	; 0x0d
+ 218:	84 30       	cpi	r24, 0x04	; 4
+ 21a:	10 f0       	brcs	.+4      	; 0x220 <__vector_10+0x66>
+			greenON;
+ 21c:	71 9a       	sbi	0x0e, 1	; 14
+ 21e:	01 c0       	rjmp	.+2      	; 0x222 <__vector_10+0x68>
+		} else {
+			greenOFF;
+ 220:	71 98       	cbi	0x0e, 1	; 14
+		}
+		/* Byte 1 */
+		if (CHECK_BIT(data[0], 0)) { /* Pump RHS */
+ 222:	89 81       	ldd	r24, Y+1	; 0x01
+ 224:	80 ff       	sbrs	r24, 0
+ 226:	06 c0       	rjmp	.+12     	; 0x234 <__vector_10+0x7a>
+			HC4ON;
+ 228:	e2 e0       	ldi	r30, 0x02	; 2
+ 22a:	f1 e0       	ldi	r31, 0x01	; 1
+ 22c:	80 81       	ld	r24, Z
+ 22e:	80 62       	ori	r24, 0x20	; 32
+ 230:	80 83       	st	Z, r24
+ 232:	05 c0       	rjmp	.+10     	; 0x23e <__vector_10+0x84>
+		} else {
+			HC4OFF;
+ 234:	e2 e0       	ldi	r30, 0x02	; 2
+ 236:	f1 e0       	ldi	r31, 0x01	; 1
+ 238:	80 81       	ld	r24, Z
+ 23a:	8f 7d       	andi	r24, 0xDF	; 223
+ 23c:	80 83       	st	Z, r24
+		} 
+		if (CHECK_BIT(data[0], 1)) { /* Fan RHS */
+ 23e:	89 81       	ldd	r24, Y+1	; 0x01
+ 240:	81 ff       	sbrs	r24, 1
+ 242:	06 c0       	rjmp	.+12     	; 0x250 <__vector_10+0x96>
+			HC5ON;
+ 244:	eb e0       	ldi	r30, 0x0B	; 11
+ 246:	f1 e0       	ldi	r31, 0x01	; 1
+ 248:	80 81       	ld	r24, Z
+ 24a:	88 60       	ori	r24, 0x08	; 8
+ 24c:	80 83       	st	Z, r24
+ 24e:	05 c0       	rjmp	.+10     	; 0x25a <__vector_10+0xa0>
+		} else {
+			HC5OFF;
+ 250:	eb e0       	ldi	r30, 0x0B	; 11
+ 252:	f1 e0       	ldi	r31, 0x01	; 1
+ 254:	80 81       	ld	r24, Z
+ 256:	87 7f       	andi	r24, 0xF7	; 247
+ 258:	80 83       	st	Z, r24
+		}
+		if (CHECK_BIT(data[0], 2)) { /* Pump LHS */
+ 25a:	89 81       	ldd	r24, Y+1	; 0x01
+ 25c:	82 ff       	sbrs	r24, 2
+ 25e:	06 c0       	rjmp	.+12     	; 0x26c <__vector_10+0xb2>
+			HC6ON;
+ 260:	eb e0       	ldi	r30, 0x0B	; 11
+ 262:	f1 e0       	ldi	r31, 0x01	; 1
+ 264:	80 81       	ld	r24, Z
+ 266:	80 62       	ori	r24, 0x20	; 32
+ 268:	80 83       	st	Z, r24
+ 26a:	05 c0       	rjmp	.+10     	; 0x276 <__vector_10+0xbc>
+		} else {
+			HC6OFF;
+ 26c:	eb e0       	ldi	r30, 0x0B	; 11
+ 26e:	f1 e0       	ldi	r31, 0x01	; 1
+ 270:	80 81       	ld	r24, Z
+ 272:	8f 7d       	andi	r24, 0xDF	; 223
+ 274:	80 83       	st	Z, r24
+		}
+		if (CHECK_BIT(data[0], 3)) { /* Fan LHS */
+ 276:	89 81       	ldd	r24, Y+1	; 0x01
+ 278:	83 ff       	sbrs	r24, 3
+ 27a:	06 c0       	rjmp	.+12     	; 0x288 <__vector_10+0xce>
+			HC7ON;
+ 27c:	e2 e0       	ldi	r30, 0x02	; 2
+ 27e:	f1 e0       	ldi	r31, 0x01	; 1
+ 280:	80 81       	ld	r24, Z
+ 282:	88 60       	ori	r24, 0x08	; 8
+ 284:	80 83       	st	Z, r24
+ 286:	05 c0       	rjmp	.+10     	; 0x292 <__vector_10+0xd8>
+		} else {
+			HC7OFF;
+ 288:	e2 e0       	ldi	r30, 0x02	; 2
+ 28a:	f1 e0       	ldi	r31, 0x01	; 1
+ 28c:	80 81       	ld	r24, Z
+ 28e:	87 7f       	andi	r24, 0xF7	; 247
+ 290:	80 83       	st	Z, r24
+		}
+		if (CHECK_BIT(data[0], 4)) { /* Brake */
+ 292:	89 81       	ldd	r24, Y+1	; 0x01
+ 294:	84 ff       	sbrs	r24, 4
+ 296:	02 c0       	rjmp	.+4      	; 0x29c <__vector_10+0xe2>
+			HLchan1ON;
+ 298:	2c 9a       	sbi	0x05, 4	; 5
+ 29a:	01 c0       	rjmp	.+2      	; 0x29e <__vector_10+0xe4>
+		} else {
+			HLchan1OFF;
+ 29c:	2c 98       	cbi	0x05, 4	; 5
+		}
+		if (CHECK_BIT(data[0], 5)) {  /* Siren */
+ 29e:	89 81       	ldd	r24, Y+1	; 0x01
+ 2a0:	85 ff       	sbrs	r24, 5
+ 2a2:	02 c0       	rjmp	.+4      	; 0x2a8 <__vector_10+0xee>
+			HC9ON;
+ 2a4:	73 9a       	sbi	0x0e, 3	; 14
+ 2a6:	01 c0       	rjmp	.+2      	; 0x2aa <__vector_10+0xf0>
+		} else {
+			HC9OFF;
+ 2a8:	73 98       	cbi	0x0e, 3	; 14
+		}
+		if (CHECK_BIT(data[0], 6)) { /* Shutdown - On */
+ 2aa:	89 81       	ldd	r24, Y+1	; 0x01
+ 2ac:	86 ff       	sbrs	r24, 6
+ 2ae:	06 c0       	rjmp	.+12     	; 0x2bc <__vector_10+0x102>
+			HLchan2ON;
+ 2b0:	e2 e0       	ldi	r30, 0x02	; 2
+ 2b2:	f1 e0       	ldi	r31, 0x01	; 1
+ 2b4:	80 81       	ld	r24, Z
+ 2b6:	80 64       	ori	r24, 0x40	; 64
+ 2b8:	80 83       	st	Z, r24
+ 2ba:	05 c0       	rjmp	.+10     	; 0x2c6 <__vector_10+0x10c>
+		} else {
+			HLchan2OFF; // Test?
+ 2bc:	e2 e0       	ldi	r30, 0x02	; 2
+ 2be:	f1 e0       	ldi	r31, 0x01	; 1
+ 2c0:	80 81       	ld	r24, Z
+ 2c2:	8f 7b       	andi	r24, 0xBF	; 191
+ 2c4:	80 83       	st	Z, r24
+		}
+		if (CHECK_BIT(data[0], 7)) { /* Shutdown + On */
+ 2c6:	89 81       	ldd	r24, Y+1	; 0x01
+ 2c8:	88 23       	and	r24, r24
+ 2ca:	14 f4       	brge	.+4      	; 0x2d0 <__vector_10+0x116>
+			HC3ON;
+ 2cc:	74 9a       	sbi	0x0e, 4	; 14
+ 2ce:	01 c0       	rjmp	.+2      	; 0x2d2 <__vector_10+0x118>
+		} else {
+			HC3OFF;
+ 2d0:	74 98       	cbi	0x0e, 4	; 14
 
-0000024c <MCP2515_CS_low>:
+		/* Byte 4 */
+
+		/* Byte 5 */
+	}
+ 2d2:	2d 96       	adiw	r28, 0x0d	; 13
+ 2d4:	0f b6       	in	r0, 0x3f	; 63
+ 2d6:	f8 94       	cli
+ 2d8:	de bf       	out	0x3e, r29	; 62
+ 2da:	0f be       	out	0x3f, r0	; 63
+ 2dc:	cd bf       	out	0x3d, r28	; 61
+ 2de:	df 91       	pop	r29
+ 2e0:	cf 91       	pop	r28
+ 2e2:	ff 91       	pop	r31
+ 2e4:	ef 91       	pop	r30
+ 2e6:	bf 91       	pop	r27
+ 2e8:	af 91       	pop	r26
+ 2ea:	9f 91       	pop	r25
+ 2ec:	8f 91       	pop	r24
+ 2ee:	7f 91       	pop	r23
+ 2f0:	6f 91       	pop	r22
+ 2f2:	5f 91       	pop	r21
+ 2f4:	4f 91       	pop	r20
+ 2f6:	3f 91       	pop	r19
+ 2f8:	2f 91       	pop	r18
+ 2fa:	0f 90       	pop	r0
+ 2fc:	0b be       	out	0x3b, r0	; 59
+ 2fe:	0f 90       	pop	r0
+ 300:	0f be       	out	0x3f, r0	; 63
+ 302:	0f 90       	pop	r0
+ 304:	1f 90       	pop	r1
+ 306:	18 95       	reti
+
+00000308 <MCP2515_CS_low>:
 	}
 	MCP2515_instruction(CANbus, 128|(1<<((mob>>4) - 3)));		//creates an instruction that matches the mob that is chosen.
 	//PORTC &= ~(1<<PINC7);		//Drop the TX
 	//_delay_us(50);
 	//PORTC |= (1<<PINC7);		
 }
- 24c:	82 30       	cpi	r24, 0x02	; 2
- 24e:	31 f0       	breq	.+12     	; 0x25c <MCP2515_CS_low+0x10>
- 250:	84 30       	cpi	r24, 0x04	; 4
- 252:	31 f0       	breq	.+12     	; 0x260 <MCP2515_CS_low+0x14>
- 254:	81 30       	cpi	r24, 0x01	; 1
- 256:	29 f4       	brne	.+10     	; 0x262 <MCP2515_CS_low+0x16>
- 258:	10 98       	cbi	0x02, 0	; 2
- 25a:	08 95       	ret
- 25c:	10 98       	cbi	0x02, 0	; 2
- 25e:	08 95       	ret
- 260:	10 98       	cbi	0x02, 0	; 2
- 262:	08 95       	ret
+ 308:	82 30       	cpi	r24, 0x02	; 2
+ 30a:	31 f0       	breq	.+12     	; 0x318 <MCP2515_CS_low+0x10>
+ 30c:	84 30       	cpi	r24, 0x04	; 4
+ 30e:	31 f0       	breq	.+12     	; 0x31c <MCP2515_CS_low+0x14>
+ 310:	81 30       	cpi	r24, 0x01	; 1
+ 312:	29 f4       	brne	.+10     	; 0x31e <MCP2515_CS_low+0x16>
+ 314:	10 98       	cbi	0x02, 0	; 2
+ 316:	08 95       	ret
+ 318:	10 98       	cbi	0x02, 0	; 2
+ 31a:	08 95       	ret
+ 31c:	10 98       	cbi	0x02, 0	; 2
+ 31e:	08 95       	ret
 
-00000264 <MCP2515_CS_high>:
- 264:	82 30       	cpi	r24, 0x02	; 2
- 266:	31 f0       	breq	.+12     	; 0x274 <MCP2515_CS_high+0x10>
- 268:	84 30       	cpi	r24, 0x04	; 4
- 26a:	31 f0       	breq	.+12     	; 0x278 <MCP2515_CS_high+0x14>
- 26c:	81 30       	cpi	r24, 0x01	; 1
- 26e:	29 f4       	brne	.+10     	; 0x27a <MCP2515_CS_high+0x16>
- 270:	10 9a       	sbi	0x02, 0	; 2
- 272:	08 95       	ret
- 274:	10 9a       	sbi	0x02, 0	; 2
- 276:	08 95       	ret
- 278:	10 9a       	sbi	0x02, 0	; 2
- 27a:	08 95       	ret
+00000320 <MCP2515_CS_high>:
+ 320:	82 30       	cpi	r24, 0x02	; 2
+ 322:	31 f0       	breq	.+12     	; 0x330 <MCP2515_CS_high+0x10>
+ 324:	84 30       	cpi	r24, 0x04	; 4
+ 326:	31 f0       	breq	.+12     	; 0x334 <MCP2515_CS_high+0x14>
+ 328:	81 30       	cpi	r24, 0x01	; 1
+ 32a:	29 f4       	brne	.+10     	; 0x336 <MCP2515_CS_high+0x16>
+ 32c:	10 9a       	sbi	0x02, 0	; 2
+ 32e:	08 95       	ret
+ 330:	10 9a       	sbi	0x02, 0	; 2
+ 332:	08 95       	ret
+ 334:	10 9a       	sbi	0x02, 0	; 2
+ 336:	08 95       	ret
 
-0000027c <MCP2515_reg_write>:
- 27c:	1f 93       	push	r17
- 27e:	cf 93       	push	r28
- 280:	df 93       	push	r29
- 282:	c8 2f       	mov	r28, r24
- 284:	16 2f       	mov	r17, r22
- 286:	d4 2f       	mov	r29, r20
- 288:	e1 df       	rcall	.-62     	; 0x24c <MCP2515_CS_low>
- 28a:	82 e0       	ldi	r24, 0x02	; 2
- 28c:	1f d1       	rcall	.+574    	; 0x4cc <SPI_send_byte>
- 28e:	81 2f       	mov	r24, r17
- 290:	1d d1       	rcall	.+570    	; 0x4cc <SPI_send_byte>
- 292:	8d 2f       	mov	r24, r29
- 294:	1b d1       	rcall	.+566    	; 0x4cc <SPI_send_byte>
- 296:	8c 2f       	mov	r24, r28
- 298:	e5 df       	rcall	.-54     	; 0x264 <MCP2515_CS_high>
- 29a:	df 91       	pop	r29
- 29c:	cf 91       	pop	r28
- 29e:	1f 91       	pop	r17
- 2a0:	08 95       	ret
+00000338 <MCP2515_reg_write>:
+ 338:	1f 93       	push	r17
+ 33a:	cf 93       	push	r28
+ 33c:	df 93       	push	r29
+ 33e:	c8 2f       	mov	r28, r24
+ 340:	16 2f       	mov	r17, r22
+ 342:	d4 2f       	mov	r29, r20
+ 344:	e1 df       	rcall	.-62     	; 0x308 <MCP2515_CS_low>
+ 346:	82 e0       	ldi	r24, 0x02	; 2
+ 348:	1f d1       	rcall	.+574    	; 0x588 <SPI_send_byte>
+ 34a:	81 2f       	mov	r24, r17
+ 34c:	1d d1       	rcall	.+570    	; 0x588 <SPI_send_byte>
+ 34e:	8d 2f       	mov	r24, r29
+ 350:	1b d1       	rcall	.+566    	; 0x588 <SPI_send_byte>
+ 352:	8c 2f       	mov	r24, r28
+ 354:	e5 df       	rcall	.-54     	; 0x320 <MCP2515_CS_high>
+ 356:	df 91       	pop	r29
+ 358:	cf 91       	pop	r28
+ 35a:	1f 91       	pop	r17
+ 35c:	08 95       	ret
 
-000002a2 <MCP2515_instruction>:
- 2a2:	cf 93       	push	r28
- 2a4:	df 93       	push	r29
- 2a6:	c8 2f       	mov	r28, r24
- 2a8:	d6 2f       	mov	r29, r22
- 2aa:	d0 df       	rcall	.-96     	; 0x24c <MCP2515_CS_low>
- 2ac:	8d 2f       	mov	r24, r29
- 2ae:	0e d1       	rcall	.+540    	; 0x4cc <SPI_send_byte>
- 2b0:	8c 2f       	mov	r24, r28
- 2b2:	d8 df       	rcall	.-80     	; 0x264 <MCP2515_CS_high>
- 2b4:	df 91       	pop	r29
- 2b6:	cf 91       	pop	r28
- 2b8:	08 95       	ret
+0000035e <MCP2515_instruction>:
+ 35e:	cf 93       	push	r28
+ 360:	df 93       	push	r29
+ 362:	c8 2f       	mov	r28, r24
+ 364:	d6 2f       	mov	r29, r22
+ 366:	d0 df       	rcall	.-96     	; 0x308 <MCP2515_CS_low>
+ 368:	8d 2f       	mov	r24, r29
+ 36a:	0e d1       	rcall	.+540    	; 0x588 <SPI_send_byte>
+ 36c:	8c 2f       	mov	r24, r28
+ 36e:	d8 df       	rcall	.-80     	; 0x320 <MCP2515_CS_high>
+ 370:	df 91       	pop	r29
+ 372:	cf 91       	pop	r28
+ 374:	08 95       	ret
 
-000002ba <MCP2515_bit_modify>:
- 2ba:	0f 93       	push	r16
- 2bc:	1f 93       	push	r17
- 2be:	cf 93       	push	r28
- 2c0:	df 93       	push	r29
- 2c2:	c8 2f       	mov	r28, r24
- 2c4:	06 2f       	mov	r16, r22
- 2c6:	d4 2f       	mov	r29, r20
- 2c8:	12 2f       	mov	r17, r18
- 2ca:	c0 df       	rcall	.-128    	; 0x24c <MCP2515_CS_low>
- 2cc:	85 e0       	ldi	r24, 0x05	; 5
- 2ce:	fe d0       	rcall	.+508    	; 0x4cc <SPI_send_byte>
- 2d0:	80 2f       	mov	r24, r16
- 2d2:	fc d0       	rcall	.+504    	; 0x4cc <SPI_send_byte>
- 2d4:	81 2f       	mov	r24, r17
- 2d6:	fa d0       	rcall	.+500    	; 0x4cc <SPI_send_byte>
- 2d8:	8d 2f       	mov	r24, r29
- 2da:	f8 d0       	rcall	.+496    	; 0x4cc <SPI_send_byte>
- 2dc:	8c 2f       	mov	r24, r28
- 2de:	c2 df       	rcall	.-124    	; 0x264 <MCP2515_CS_high>
- 2e0:	df 91       	pop	r29
- 2e2:	cf 91       	pop	r28
- 2e4:	1f 91       	pop	r17
- 2e6:	0f 91       	pop	r16
- 2e8:	08 95       	ret
+00000376 <MCP2515_bit_modify>:
+ 376:	0f 93       	push	r16
+ 378:	1f 93       	push	r17
+ 37a:	cf 93       	push	r28
+ 37c:	df 93       	push	r29
+ 37e:	c8 2f       	mov	r28, r24
+ 380:	06 2f       	mov	r16, r22
+ 382:	d4 2f       	mov	r29, r20
+ 384:	12 2f       	mov	r17, r18
+ 386:	c0 df       	rcall	.-128    	; 0x308 <MCP2515_CS_low>
+ 388:	85 e0       	ldi	r24, 0x05	; 5
+ 38a:	fe d0       	rcall	.+508    	; 0x588 <SPI_send_byte>
+ 38c:	80 2f       	mov	r24, r16
+ 38e:	fc d0       	rcall	.+504    	; 0x588 <SPI_send_byte>
+ 390:	81 2f       	mov	r24, r17
+ 392:	fa d0       	rcall	.+500    	; 0x588 <SPI_send_byte>
+ 394:	8d 2f       	mov	r24, r29
+ 396:	f8 d0       	rcall	.+496    	; 0x588 <SPI_send_byte>
+ 398:	8c 2f       	mov	r24, r28
+ 39a:	c2 df       	rcall	.-124    	; 0x320 <MCP2515_CS_high>
+ 39c:	df 91       	pop	r29
+ 39e:	cf 91       	pop	r28
+ 3a0:	1f 91       	pop	r17
+ 3a2:	0f 91       	pop	r16
+ 3a4:	08 95       	ret
 
-000002ea <MCP2515_init>:
- 2ea:	cf 93       	push	r28
- 2ec:	c8 2f       	mov	r28, r24
- 2ee:	60 ec       	ldi	r22, 0xC0	; 192
- 2f0:	d8 df       	rcall	.-80     	; 0x2a2 <MCP2515_instruction>
- 2f2:	20 ee       	ldi	r18, 0xE0	; 224
- 2f4:	40 e8       	ldi	r20, 0x80	; 128
- 2f6:	6f e0       	ldi	r22, 0x0F	; 15
- 2f8:	8c 2f       	mov	r24, r28
- 2fa:	df df       	rcall	.-66     	; 0x2ba <MCP2515_bit_modify>
- 2fc:	44 e0       	ldi	r20, 0x04	; 4
- 2fe:	6a e2       	ldi	r22, 0x2A	; 42
- 300:	8c 2f       	mov	r24, r28
- 302:	bc df       	rcall	.-136    	; 0x27c <MCP2515_reg_write>
- 304:	4a ec       	ldi	r20, 0xCA	; 202
- 306:	69 e2       	ldi	r22, 0x29	; 41
- 308:	8c 2f       	mov	r24, r28
- 30a:	b8 df       	rcall	.-144    	; 0x27c <MCP2515_reg_write>
- 30c:	41 e0       	ldi	r20, 0x01	; 1
- 30e:	68 e2       	ldi	r22, 0x28	; 40
- 310:	8c 2f       	mov	r24, r28
- 312:	b4 df       	rcall	.-152    	; 0x27c <MCP2515_reg_write>
- 314:	43 e0       	ldi	r20, 0x03	; 3
- 316:	6b e2       	ldi	r22, 0x2B	; 43
- 318:	8c 2f       	mov	r24, r28
- 31a:	b0 df       	rcall	.-160    	; 0x27c <MCP2515_reg_write>
- 31c:	41 e0       	ldi	r20, 0x01	; 1
- 31e:	6d e0       	ldi	r22, 0x0D	; 13
- 320:	8c 2f       	mov	r24, r28
- 322:	ac df       	rcall	.-168    	; 0x27c <MCP2515_reg_write>
- 324:	28 ee       	ldi	r18, 0xE8	; 232
- 326:	48 e0       	ldi	r20, 0x08	; 8
- 328:	6f e0       	ldi	r22, 0x0F	; 15
- 32a:	8c 2f       	mov	r24, r28
- 32c:	c6 df       	rcall	.-116    	; 0x2ba <MCP2515_bit_modify>
- 32e:	cf 91       	pop	r28
- 330:	08 95       	ret
+000003a6 <MCP2515_init>:
+ 3a6:	cf 93       	push	r28
+ 3a8:	c8 2f       	mov	r28, r24
+ 3aa:	60 ec       	ldi	r22, 0xC0	; 192
+ 3ac:	d8 df       	rcall	.-80     	; 0x35e <MCP2515_instruction>
+ 3ae:	20 ee       	ldi	r18, 0xE0	; 224
+ 3b0:	40 e8       	ldi	r20, 0x80	; 128
+ 3b2:	6f e0       	ldi	r22, 0x0F	; 15
+ 3b4:	8c 2f       	mov	r24, r28
+ 3b6:	df df       	rcall	.-66     	; 0x376 <MCP2515_bit_modify>
+ 3b8:	44 e0       	ldi	r20, 0x04	; 4
+ 3ba:	6a e2       	ldi	r22, 0x2A	; 42
+ 3bc:	8c 2f       	mov	r24, r28
+ 3be:	bc df       	rcall	.-136    	; 0x338 <MCP2515_reg_write>
+ 3c0:	4a ec       	ldi	r20, 0xCA	; 202
+ 3c2:	69 e2       	ldi	r22, 0x29	; 41
+ 3c4:	8c 2f       	mov	r24, r28
+ 3c6:	b8 df       	rcall	.-144    	; 0x338 <MCP2515_reg_write>
+ 3c8:	41 e0       	ldi	r20, 0x01	; 1
+ 3ca:	68 e2       	ldi	r22, 0x28	; 40
+ 3cc:	8c 2f       	mov	r24, r28
+ 3ce:	b4 df       	rcall	.-152    	; 0x338 <MCP2515_reg_write>
+ 3d0:	43 e0       	ldi	r20, 0x03	; 3
+ 3d2:	6b e2       	ldi	r22, 0x2B	; 43
+ 3d4:	8c 2f       	mov	r24, r28
+ 3d6:	b0 df       	rcall	.-160    	; 0x338 <MCP2515_reg_write>
+ 3d8:	41 e0       	ldi	r20, 0x01	; 1
+ 3da:	6d e0       	ldi	r22, 0x0D	; 13
+ 3dc:	8c 2f       	mov	r24, r28
+ 3de:	ac df       	rcall	.-168    	; 0x338 <MCP2515_reg_write>
+ 3e0:	28 ee       	ldi	r18, 0xE8	; 232
+ 3e2:	48 e0       	ldi	r20, 0x08	; 8
+ 3e4:	6f e0       	ldi	r22, 0x0F	; 15
+ 3e6:	8c 2f       	mov	r24, r28
+ 3e8:	c6 df       	rcall	.-116    	; 0x376 <MCP2515_bit_modify>
+ 3ea:	cf 91       	pop	r28
+ 3ec:	08 95       	ret
 
-00000332 <MCP2515_PullCanPacket>:
- 332:	7f 92       	push	r7
- 334:	8f 92       	push	r8
- 336:	9f 92       	push	r9
- 338:	af 92       	push	r10
- 33a:	bf 92       	push	r11
- 33c:	cf 92       	push	r12
- 33e:	df 92       	push	r13
- 340:	ef 92       	push	r14
- 342:	ff 92       	push	r15
- 344:	0f 93       	push	r16
- 346:	1f 93       	push	r17
- 348:	cf 93       	push	r28
- 34a:	df 93       	push	r29
- 34c:	cd b7       	in	r28, 0x3d	; 61
- 34e:	de b7       	in	r29, 0x3e	; 62
- 350:	2d 97       	sbiw	r28, 0x0d	; 13
- 352:	0f b6       	in	r0, 0x3f	; 63
- 354:	f8 94       	cli
- 356:	de bf       	out	0x3e, r29	; 62
- 358:	0f be       	out	0x3f, r0	; 63
- 35a:	cd bf       	out	0x3d, r28	; 61
- 35c:	78 2e       	mov	r7, r24
- 35e:	4a 01       	movw	r8, r20
- 360:	59 01       	movw	r10, r18
- 362:	61 37       	cpi	r22, 0x71	; 113
- 364:	28 f4       	brcc	.+10     	; 0x370 <MCP2515_PullCanPacket+0x3e>
- 366:	0f 2e       	mov	r0, r31
- 368:	f0 e9       	ldi	r31, 0x90	; 144
- 36a:	ff 2e       	mov	r15, r31
- 36c:	f0 2d       	mov	r31, r0
- 36e:	04 c0       	rjmp	.+8      	; 0x378 <MCP2515_PullCanPacket+0x46>
- 370:	0f 2e       	mov	r0, r31
- 372:	f4 e9       	ldi	r31, 0x94	; 148
- 374:	ff 2e       	mov	r15, r31
- 376:	f0 2d       	mov	r31, r0
- 378:	87 2d       	mov	r24, r7
- 37a:	68 df       	rcall	.-304    	; 0x24c <MCP2515_CS_low>
- 37c:	8f 2d       	mov	r24, r15
- 37e:	a6 d0       	rcall	.+332    	; 0x4cc <SPI_send_byte>
- 380:	ce 01       	movw	r24, r28
- 382:	01 96       	adiw	r24, 0x01	; 1
- 384:	7c 01       	movw	r14, r24
- 386:	6e 01       	movw	r12, r28
- 388:	9e e0       	ldi	r25, 0x0E	; 14
- 38a:	c9 0e       	add	r12, r25
- 38c:	d1 1c       	adc	r13, r1
- 38e:	80 e0       	ldi	r24, 0x00	; 0
- 390:	9d d0       	rcall	.+314    	; 0x4cc <SPI_send_byte>
- 392:	f7 01       	movw	r30, r14
- 394:	81 93       	st	Z+, r24
- 396:	7f 01       	movw	r14, r30
- 398:	ec 15       	cp	r30, r12
- 39a:	fd 05       	cpc	r31, r13
- 39c:	c1 f7       	brne	.-16     	; 0x38e <MCP2515_PullCanPacket+0x5c>
- 39e:	2a 81       	ldd	r18, Y+2	; 0x02
- 3a0:	89 81       	ldd	r24, Y+1	; 0x01
- 3a2:	90 e0       	ldi	r25, 0x00	; 0
- 3a4:	a0 e0       	ldi	r26, 0x00	; 0
- 3a6:	b0 e0       	ldi	r27, 0x00	; 0
- 3a8:	07 2e       	mov	r0, r23
- 3aa:	75 e1       	ldi	r23, 0x15	; 21
- 3ac:	88 0f       	add	r24, r24
- 3ae:	99 1f       	adc	r25, r25
- 3b0:	aa 1f       	adc	r26, r26
- 3b2:	bb 1f       	adc	r27, r27
- 3b4:	7a 95       	dec	r23
- 3b6:	d1 f7       	brne	.-12     	; 0x3ac <MCP2515_PullCanPacket+0x7a>
- 3b8:	70 2d       	mov	r23, r0
- 3ba:	3b 81       	ldd	r19, Y+3	; 0x03
- 3bc:	93 2b       	or	r25, r19
- 3be:	3c 81       	ldd	r19, Y+4	; 0x04
- 3c0:	83 2b       	or	r24, r19
- 3c2:	42 2f       	mov	r20, r18
- 3c4:	40 7e       	andi	r20, 0xE0	; 224
- 3c6:	50 e0       	ldi	r21, 0x00	; 0
- 3c8:	60 e0       	ldi	r22, 0x00	; 0
- 3ca:	70 e0       	ldi	r23, 0x00	; 0
- 3cc:	03 2e       	mov	r0, r19
- 3ce:	3d e0       	ldi	r19, 0x0D	; 13
- 3d0:	44 0f       	add	r20, r20
- 3d2:	55 1f       	adc	r21, r21
- 3d4:	66 1f       	adc	r22, r22
- 3d6:	77 1f       	adc	r23, r23
- 3d8:	3a 95       	dec	r19
- 3da:	d1 f7       	brne	.-12     	; 0x3d0 <MCP2515_PullCanPacket+0x9e>
- 3dc:	30 2d       	mov	r19, r0
- 3de:	84 2b       	or	r24, r20
- 3e0:	95 2b       	or	r25, r21
- 3e2:	a6 2b       	or	r26, r22
- 3e4:	b7 2b       	or	r27, r23
- 3e6:	23 70       	andi	r18, 0x03	; 3
- 3e8:	a2 2b       	or	r26, r18
- 3ea:	f8 01       	movw	r30, r16
- 3ec:	80 83       	st	Z, r24
- 3ee:	91 83       	std	Z+1, r25	; 0x01
- 3f0:	a2 83       	std	Z+2, r26	; 0x02
- 3f2:	b3 83       	std	Z+3, r27	; 0x03
- 3f4:	4d 85       	ldd	r20, Y+13	; 0x0d
- 3f6:	4f 70       	andi	r20, 0x0F	; 15
- 3f8:	f4 01       	movw	r30, r8
- 3fa:	40 83       	st	Z, r20
- 3fc:	50 e0       	ldi	r21, 0x00	; 0
- 3fe:	be 01       	movw	r22, r28
- 400:	6b 5f       	subi	r22, 0xFB	; 251
- 402:	7f 4f       	sbci	r23, 0xFF	; 255
- 404:	c5 01       	movw	r24, r10
- 406:	6e d0       	rcall	.+220    	; 0x4e4 <memcpy>
- 408:	87 2d       	mov	r24, r7
- 40a:	2c df       	rcall	.-424    	; 0x264 <MCP2515_CS_high>
- 40c:	2d 96       	adiw	r28, 0x0d	; 13
+000003ee <MCP2515_PullCanPacket>:
+ 3ee:	7f 92       	push	r7
+ 3f0:	8f 92       	push	r8
+ 3f2:	9f 92       	push	r9
+ 3f4:	af 92       	push	r10
+ 3f6:	bf 92       	push	r11
+ 3f8:	cf 92       	push	r12
+ 3fa:	df 92       	push	r13
+ 3fc:	ef 92       	push	r14
+ 3fe:	ff 92       	push	r15
+ 400:	0f 93       	push	r16
+ 402:	1f 93       	push	r17
+ 404:	cf 93       	push	r28
+ 406:	df 93       	push	r29
+ 408:	cd b7       	in	r28, 0x3d	; 61
+ 40a:	de b7       	in	r29, 0x3e	; 62
+ 40c:	2d 97       	sbiw	r28, 0x0d	; 13
  40e:	0f b6       	in	r0, 0x3f	; 63
  410:	f8 94       	cli
  412:	de bf       	out	0x3e, r29	; 62
  414:	0f be       	out	0x3f, r0	; 63
  416:	cd bf       	out	0x3d, r28	; 61
- 418:	df 91       	pop	r29
- 41a:	cf 91       	pop	r28
- 41c:	1f 91       	pop	r17
- 41e:	0f 91       	pop	r16
- 420:	ff 90       	pop	r15
- 422:	ef 90       	pop	r14
- 424:	df 90       	pop	r13
- 426:	cf 90       	pop	r12
- 428:	bf 90       	pop	r11
- 42a:	af 90       	pop	r10
- 42c:	9f 90       	pop	r9
- 42e:	8f 90       	pop	r8
- 430:	7f 90       	pop	r7
- 432:	08 95       	ret
+ 418:	78 2e       	mov	r7, r24
+ 41a:	4a 01       	movw	r8, r20
+ 41c:	59 01       	movw	r10, r18
+ 41e:	61 37       	cpi	r22, 0x71	; 113
+ 420:	28 f4       	brcc	.+10     	; 0x42c <__LOCK_REGION_LENGTH__+0x2c>
+ 422:	0f 2e       	mov	r0, r31
+ 424:	f0 e9       	ldi	r31, 0x90	; 144
+ 426:	ff 2e       	mov	r15, r31
+ 428:	f0 2d       	mov	r31, r0
+ 42a:	04 c0       	rjmp	.+8      	; 0x434 <__LOCK_REGION_LENGTH__+0x34>
+ 42c:	0f 2e       	mov	r0, r31
+ 42e:	f4 e9       	ldi	r31, 0x94	; 148
+ 430:	ff 2e       	mov	r15, r31
+ 432:	f0 2d       	mov	r31, r0
+ 434:	87 2d       	mov	r24, r7
+ 436:	68 df       	rcall	.-304    	; 0x308 <MCP2515_CS_low>
+ 438:	8f 2d       	mov	r24, r15
+ 43a:	a6 d0       	rcall	.+332    	; 0x588 <SPI_send_byte>
+ 43c:	ce 01       	movw	r24, r28
+ 43e:	01 96       	adiw	r24, 0x01	; 1
+ 440:	7c 01       	movw	r14, r24
+ 442:	6e 01       	movw	r12, r28
+ 444:	9e e0       	ldi	r25, 0x0E	; 14
+ 446:	c9 0e       	add	r12, r25
+ 448:	d1 1c       	adc	r13, r1
+ 44a:	80 e0       	ldi	r24, 0x00	; 0
+ 44c:	9d d0       	rcall	.+314    	; 0x588 <SPI_send_byte>
+ 44e:	f7 01       	movw	r30, r14
+ 450:	81 93       	st	Z+, r24
+ 452:	7f 01       	movw	r14, r30
+ 454:	ec 15       	cp	r30, r12
+ 456:	fd 05       	cpc	r31, r13
+ 458:	c1 f7       	brne	.-16     	; 0x44a <__LOCK_REGION_LENGTH__+0x4a>
+ 45a:	2a 81       	ldd	r18, Y+2	; 0x02
+ 45c:	89 81       	ldd	r24, Y+1	; 0x01
+ 45e:	90 e0       	ldi	r25, 0x00	; 0
+ 460:	a0 e0       	ldi	r26, 0x00	; 0
+ 462:	b0 e0       	ldi	r27, 0x00	; 0
+ 464:	07 2e       	mov	r0, r23
+ 466:	75 e1       	ldi	r23, 0x15	; 21
+ 468:	88 0f       	add	r24, r24
+ 46a:	99 1f       	adc	r25, r25
+ 46c:	aa 1f       	adc	r26, r26
+ 46e:	bb 1f       	adc	r27, r27
+ 470:	7a 95       	dec	r23
+ 472:	d1 f7       	brne	.-12     	; 0x468 <__LOCK_REGION_LENGTH__+0x68>
+ 474:	70 2d       	mov	r23, r0
+ 476:	3b 81       	ldd	r19, Y+3	; 0x03
+ 478:	93 2b       	or	r25, r19
+ 47a:	3c 81       	ldd	r19, Y+4	; 0x04
+ 47c:	83 2b       	or	r24, r19
+ 47e:	42 2f       	mov	r20, r18
+ 480:	40 7e       	andi	r20, 0xE0	; 224
+ 482:	50 e0       	ldi	r21, 0x00	; 0
+ 484:	60 e0       	ldi	r22, 0x00	; 0
+ 486:	70 e0       	ldi	r23, 0x00	; 0
+ 488:	03 2e       	mov	r0, r19
+ 48a:	3d e0       	ldi	r19, 0x0D	; 13
+ 48c:	44 0f       	add	r20, r20
+ 48e:	55 1f       	adc	r21, r21
+ 490:	66 1f       	adc	r22, r22
+ 492:	77 1f       	adc	r23, r23
+ 494:	3a 95       	dec	r19
+ 496:	d1 f7       	brne	.-12     	; 0x48c <__LOCK_REGION_LENGTH__+0x8c>
+ 498:	30 2d       	mov	r19, r0
+ 49a:	84 2b       	or	r24, r20
+ 49c:	95 2b       	or	r25, r21
+ 49e:	a6 2b       	or	r26, r22
+ 4a0:	b7 2b       	or	r27, r23
+ 4a2:	23 70       	andi	r18, 0x03	; 3
+ 4a4:	a2 2b       	or	r26, r18
+ 4a6:	f8 01       	movw	r30, r16
+ 4a8:	80 83       	st	Z, r24
+ 4aa:	91 83       	std	Z+1, r25	; 0x01
+ 4ac:	a2 83       	std	Z+2, r26	; 0x02
+ 4ae:	b3 83       	std	Z+3, r27	; 0x03
+ 4b0:	4d 81       	ldd	r20, Y+5	; 0x05
+ 4b2:	4f 70       	andi	r20, 0x0F	; 15
+ 4b4:	f4 01       	movw	r30, r8
+ 4b6:	40 83       	st	Z, r20
+ 4b8:	50 e0       	ldi	r21, 0x00	; 0
+ 4ba:	be 01       	movw	r22, r28
+ 4bc:	6a 5f       	subi	r22, 0xFA	; 250
+ 4be:	7f 4f       	sbci	r23, 0xFF	; 255
+ 4c0:	c5 01       	movw	r24, r10
+ 4c2:	6e d0       	rcall	.+220    	; 0x5a0 <memcpy>
+ 4c4:	87 2d       	mov	r24, r7
+ 4c6:	2c df       	rcall	.-424    	; 0x320 <MCP2515_CS_high>
+ 4c8:	2d 96       	adiw	r28, 0x0d	; 13
+ 4ca:	0f b6       	in	r0, 0x3f	; 63
+ 4cc:	f8 94       	cli
+ 4ce:	de bf       	out	0x3e, r29	; 62
+ 4d0:	0f be       	out	0x3f, r0	; 63
+ 4d2:	cd bf       	out	0x3d, r28	; 61
+ 4d4:	df 91       	pop	r29
+ 4d6:	cf 91       	pop	r28
+ 4d8:	1f 91       	pop	r17
+ 4da:	0f 91       	pop	r16
+ 4dc:	ff 90       	pop	r15
+ 4de:	ef 90       	pop	r14
+ 4e0:	df 90       	pop	r13
+ 4e2:	cf 90       	pop	r12
+ 4e4:	bf 90       	pop	r11
+ 4e6:	af 90       	pop	r10
+ 4e8:	9f 90       	pop	r9
+ 4ea:	8f 90       	pop	r8
+ 4ec:	7f 90       	pop	r7
+ 4ee:	08 95       	ret
 
-00000434 <MCP2515_check_receive_status>:
+000004f0 <MCP2515_check_receive_status>:
 
 
 uint8_t MCP2515_check_receive_status(uint8_t CANbus)
 {
- 434:	cf 93       	push	r28
- 436:	df 93       	push	r29
- 438:	c8 2f       	mov	r28, r24
+ 4f0:	cf 93       	push	r28
+ 4f2:	df 93       	push	r29
+ 4f4:	c8 2f       	mov	r28, r24
 	uint8_t status;
 	MCP2515_CS_low(CANbus);			//unset CS so MCP2515 knows we are talking
- 43a:	08 df       	rcall	.-496    	; 0x24c <MCP2515_CS_low>
+ 4f6:	08 df       	rcall	.-496    	; 0x308 <MCP2515_CS_low>
 	SPI_send_byte(MCP2515_RXSTATUS);
- 43c:	80 eb       	ldi	r24, 0xB0	; 176
- 43e:	46 d0       	rcall	.+140    	; 0x4cc <SPI_send_byte>
+ 4f8:	80 eb       	ldi	r24, 0xB0	; 176
+ 4fa:	46 d0       	rcall	.+140    	; 0x588 <SPI_send_byte>
 	status = SPI_send_byte(0x00);						//send zeros to get data
- 440:	80 e0       	ldi	r24, 0x00	; 0
- 442:	44 d0       	rcall	.+136    	; 0x4cc <SPI_send_byte>
- 444:	d8 2f       	mov	r29, r24
+ 4fc:	80 e0       	ldi	r24, 0x00	; 0
+ 4fe:	44 d0       	rcall	.+136    	; 0x588 <SPI_send_byte>
+ 500:	d8 2f       	mov	r29, r24
 	SPI_send_byte(0x00);							//MCP2515 will repeat the data output, so send another batch of zeros
- 446:	80 e0       	ldi	r24, 0x00	; 0
- 448:	41 d0       	rcall	.+130    	; 0x4cc <SPI_send_byte>
+ 502:	80 e0       	ldi	r24, 0x00	; 0
+ 504:	41 d0       	rcall	.+130    	; 0x588 <SPI_send_byte>
 	MCP2515_CS_high(CANbus);			//set the CS
- 44a:	8c 2f       	mov	r24, r28
- 44c:	0b df       	rcall	.-490    	; 0x264 <MCP2515_CS_high>
- 44e:	8d 2f       	mov	r24, r29
+ 506:	8c 2f       	mov	r24, r28
+ 508:	0b df       	rcall	.-490    	; 0x320 <MCP2515_CS_high>
+ 50a:	8d 2f       	mov	r24, r29
 	return status;
 }
- 450:	df 91       	pop	r29
- 452:	cf 91       	pop	r28
- 454:	08 95       	ret
+ 50c:	df 91       	pop	r29
+ 50e:	cf 91       	pop	r28
+ 510:	08 95       	ret
 
-00000456 <CAN_pull_packet>:
- 456:	af 92       	push	r10
+00000512 <CAN_pull_packet>:
+ 512:	af 92       	push	r10
         status                      // SubID?
     );
 }
 
 // Serves as a wrapper for the MCP2515_PullCanPacket(..) in MCP2515.h - For more info refer to that.
 void CAN_pull_packet(uint8_t CANbus, uint8_t* numBytes, uint8_t* data, uint32_t* ID) {
- 458:	bf 92       	push	r11
- 45a:	cf 92       	push	r12
- 45c:	df 92       	push	r13
- 45e:	ef 92       	push	r14
- 460:	ff 92       	push	r15
- 462:	0f 93       	push	r16
- 464:	1f 93       	push	r17
- 466:	cf 93       	push	r28
- 468:	c8 2f       	mov	r28, r24
- 46a:	7b 01       	movw	r14, r22
- 46c:	6a 01       	movw	r12, r20
- 46e:	59 01       	movw	r10, r18
+ 514:	bf 92       	push	r11
+ 516:	cf 92       	push	r12
+ 518:	df 92       	push	r13
+ 51a:	ef 92       	push	r14
+ 51c:	ff 92       	push	r15
+ 51e:	0f 93       	push	r16
+ 520:	1f 93       	push	r17
+ 522:	cf 93       	push	r28
+ 524:	c8 2f       	mov	r28, r24
+ 526:	7b 01       	movw	r14, r22
+ 528:	6a 01       	movw	r12, r20
+ 52a:	59 01       	movw	r10, r18
 	// Receive the status of the buffers RXB0 and RXB1
 	uint8_t status = MCP2515_check_receive_status(CANbus);
- 470:	e1 df       	rcall	.-62     	; 0x434 <MCP2515_check_receive_status>
+ 52c:	e1 df       	rcall	.-62     	; 0x4f0 <MCP2515_check_receive_status>
 	// Check which receive buffer contains the data (or if both contain) by checking bits 7:6
 	switch(status>>6) {
- 472:	82 95       	swap	r24
- 474:	86 95       	lsr	r24
- 476:	86 95       	lsr	r24
- 478:	83 70       	andi	r24, 0x03	; 3
- 47a:	82 30       	cpi	r24, 0x02	; 2
- 47c:	59 f0       	breq	.+22     	; 0x494 <CAN_pull_packet+0x3e>
- 47e:	83 30       	cpi	r24, 0x03	; 3
- 480:	81 f0       	breq	.+32     	; 0x4a2 <CAN_pull_packet+0x4c>
- 482:	81 30       	cpi	r24, 0x01	; 1
- 484:	c9 f4       	brne	.+50     	; 0x4b8 <CAN_pull_packet+0x62>
+ 52e:	82 95       	swap	r24
+ 530:	86 95       	lsr	r24
+ 532:	86 95       	lsr	r24
+ 534:	83 70       	andi	r24, 0x03	; 3
+ 536:	82 30       	cpi	r24, 0x02	; 2
+ 538:	59 f0       	breq	.+22     	; 0x550 <CAN_pull_packet+0x3e>
+ 53a:	83 30       	cpi	r24, 0x03	; 3
+ 53c:	81 f0       	breq	.+32     	; 0x55e <CAN_pull_packet+0x4c>
+ 53e:	81 30       	cpi	r24, 0x01	; 1
+ 540:	c9 f4       	brne	.+50     	; 0x574 <CAN_pull_packet+0x62>
 		case 1:	// Message in RXB0
 			MCP2515_PullCanPacket(CANbus, MCP2515_RXB0SIDH, numBytes, data, ID);
- 486:	85 01       	movw	r16, r10
- 488:	96 01       	movw	r18, r12
- 48a:	a7 01       	movw	r20, r14
- 48c:	61 e6       	ldi	r22, 0x61	; 97
- 48e:	8c 2f       	mov	r24, r28
- 490:	50 df       	rcall	.-352    	; 0x332 <MCP2515_PullCanPacket>
+ 542:	85 01       	movw	r16, r10
+ 544:	96 01       	movw	r18, r12
+ 546:	a7 01       	movw	r20, r14
+ 548:	61 e6       	ldi	r22, 0x61	; 97
+ 54a:	8c 2f       	mov	r24, r28
+ 54c:	50 df       	rcall	.-352    	; 0x3ee <MCP2515_PullCanPacket>
 			break;
- 492:	12 c0       	rjmp	.+36     	; 0x4b8 <CAN_pull_packet+0x62>
+ 54e:	12 c0       	rjmp	.+36     	; 0x574 <CAN_pull_packet+0x62>
 		case 2: // Message in RXB1=
 			MCP2515_PullCanPacket(CANbus, MCP2515_RXB1SIDH, numBytes, data, ID);
- 494:	85 01       	movw	r16, r10
- 496:	96 01       	movw	r18, r12
- 498:	a7 01       	movw	r20, r14
- 49a:	61 e7       	ldi	r22, 0x71	; 113
- 49c:	8c 2f       	mov	r24, r28
- 49e:	49 df       	rcall	.-366    	; 0x332 <MCP2515_PullCanPacket>
+ 550:	85 01       	movw	r16, r10
+ 552:	96 01       	movw	r18, r12
+ 554:	a7 01       	movw	r20, r14
+ 556:	61 e7       	ldi	r22, 0x71	; 113
+ 558:	8c 2f       	mov	r24, r28
+ 55a:	49 df       	rcall	.-366    	; 0x3ee <MCP2515_PullCanPacket>
 			break;
- 4a0:	0b c0       	rjmp	.+22     	; 0x4b8 <CAN_pull_packet+0x62>
+ 55c:	0b c0       	rjmp	.+22     	; 0x574 <CAN_pull_packet+0x62>
 		case 3: // Message in both buffers
 			MCP2515_PullCanPacket(CANbus, MCP2515_RXB0SIDH, numBytes, data, ID);
- 4a2:	85 01       	movw	r16, r10
- 4a4:	96 01       	movw	r18, r12
- 4a6:	a7 01       	movw	r20, r14
- 4a8:	61 e6       	ldi	r22, 0x61	; 97
- 4aa:	8c 2f       	mov	r24, r28
- 4ac:	42 df       	rcall	.-380    	; 0x332 <MCP2515_PullCanPacket>
+ 55e:	85 01       	movw	r16, r10
+ 560:	96 01       	movw	r18, r12
+ 562:	a7 01       	movw	r20, r14
+ 564:	61 e6       	ldi	r22, 0x61	; 97
+ 566:	8c 2f       	mov	r24, r28
+ 568:	42 df       	rcall	.-380    	; 0x3ee <MCP2515_PullCanPacket>
 			MCP2515_PullCanPacket(CANbus, MCP2515_RXB1SIDH, numBytes, data, ID);
- 4ae:	96 01       	movw	r18, r12
- 4b0:	a7 01       	movw	r20, r14
- 4b2:	61 e7       	ldi	r22, 0x71	; 113
- 4b4:	8c 2f       	mov	r24, r28
- 4b6:	3d df       	rcall	.-390    	; 0x332 <MCP2515_PullCanPacket>
+ 56a:	96 01       	movw	r18, r12
+ 56c:	a7 01       	movw	r20, r14
+ 56e:	61 e7       	ldi	r22, 0x71	; 113
+ 570:	8c 2f       	mov	r24, r28
+ 572:	3d df       	rcall	.-390    	; 0x3ee <MCP2515_PullCanPacket>
 			break;
 		default:
 			break;
 	}
 }
- 4b8:	cf 91       	pop	r28
- 4ba:	1f 91       	pop	r17
- 4bc:	0f 91       	pop	r16
- 4be:	ff 90       	pop	r15
- 4c0:	ef 90       	pop	r14
- 4c2:	df 90       	pop	r13
- 4c4:	cf 90       	pop	r12
- 4c6:	bf 90       	pop	r11
- 4c8:	af 90       	pop	r10
- 4ca:	08 95       	ret
+ 574:	cf 91       	pop	r28
+ 576:	1f 91       	pop	r17
+ 578:	0f 91       	pop	r16
+ 57a:	ff 90       	pop	r15
+ 57c:	ef 90       	pop	r14
+ 57e:	df 90       	pop	r13
+ 580:	cf 90       	pop	r12
+ 582:	bf 90       	pop	r11
+ 584:	af 90       	pop	r10
+ 586:	08 95       	ret
 
-000004cc <SPI_send_byte>:
+00000588 <SPI_send_byte>:
 #include "SPI.h"
 
 uint8_t SPI_send_byte(uint8_t c)
 {
 	SPDR = c;					//write data to the transmission register. Writing to this initiates transmission.
- 4cc:	8e bd       	out	0x2e, r24	; 46
+ 588:	8e bd       	out	0x2e, r24	; 46
 	while(!(SPSR & (1<<SPIF)));
- 4ce:	0d b4       	in	r0, 0x2d	; 45
- 4d0:	07 fe       	sbrs	r0, 7
- 4d2:	fd cf       	rjmp	.-6      	; 0x4ce <SPI_send_byte+0x2>
+ 58a:	0d b4       	in	r0, 0x2d	; 45
+ 58c:	07 fe       	sbrs	r0, 7
+ 58e:	fd cf       	rjmp	.-6      	; 0x58a <SPI_send_byte+0x2>
 	return SPDR;				//return any data that was shifted into this register upon transmission.
- 4d4:	8e b5       	in	r24, 0x2e	; 46
+ 590:	8e b5       	in	r24, 0x2e	; 46
 }
- 4d6:	08 95       	ret
+ 592:	08 95       	ret
 
-000004d8 <SPI_init>:
+00000594 <SPI_init>:
 
 void SPI_init()
 {
 	//MCUCR &= ~(1<<SPIPS);		//make sure we are getting spi not on the _A spi pins.
 	SPCR = (0<<SPIE)|(1<<SPE)|(0<<DORD)|(1<<MSTR)|(0<<CPOL)|(0<<CPHA)|(1<<SPR0)|(0<<SPR1);  //set interrupt, enable SPI, MSB mode, set as master, low is idle, read on leading edge, Set to speed(fosc/64) SPR0=1, SPR1=0
- 4d8:	81 e5       	ldi	r24, 0x51	; 81
- 4da:	8c bd       	out	0x2c, r24	; 44
+ 594:	81 e5       	ldi	r24, 0x51	; 81
+ 596:	8c bd       	out	0x2c, r24	; 44
 	SPSR = (1<<SPI2X);	//set whether we want 2x speed or not (1=2x speed).
- 4dc:	81 e0       	ldi	r24, 0x01	; 1
- 4de:	8d bd       	out	0x2d, r24	; 45
+ 598:	81 e0       	ldi	r24, 0x01	; 1
+ 59a:	8d bd       	out	0x2d, r24	; 45
 	SPDR = 0x00;		//ensure data register has nothing in it
- 4e0:	1e bc       	out	0x2e, r1	; 46
- 4e2:	08 95       	ret
+ 59c:	1e bc       	out	0x2e, r1	; 46
+ 59e:	08 95       	ret
 
-000004e4 <memcpy>:
- 4e4:	fb 01       	movw	r30, r22
- 4e6:	dc 01       	movw	r26, r24
- 4e8:	02 c0       	rjmp	.+4      	; 0x4ee <memcpy+0xa>
- 4ea:	01 90       	ld	r0, Z+
- 4ec:	0d 92       	st	X+, r0
- 4ee:	41 50       	subi	r20, 0x01	; 1
- 4f0:	50 40       	sbci	r21, 0x00	; 0
- 4f2:	d8 f7       	brcc	.-10     	; 0x4ea <memcpy+0x6>
- 4f4:	08 95       	ret
+000005a0 <memcpy>:
+ 5a0:	fb 01       	movw	r30, r22
+ 5a2:	dc 01       	movw	r26, r24
+ 5a4:	02 c0       	rjmp	.+4      	; 0x5aa <memcpy+0xa>
+ 5a6:	01 90       	ld	r0, Z+
+ 5a8:	0d 92       	st	X+, r0
+ 5aa:	41 50       	subi	r20, 0x01	; 1
+ 5ac:	50 40       	sbci	r21, 0x00	; 0
+ 5ae:	d8 f7       	brcc	.-10     	; 0x5a6 <memcpy+0x6>
+ 5b0:	08 95       	ret
 
-000004f6 <_exit>:
- 4f6:	f8 94       	cli
+000005b2 <_exit>:
+ 5b2:	f8 94       	cli
 
-000004f8 <__stop_program>:
- 4f8:	ff cf       	rjmp	.-2      	; 0x4f8 <__stop_program>
+000005b4 <__stop_program>:
+ 5b4:	ff cf       	rjmp	.-2      	; 0x5b4 <__stop_program>

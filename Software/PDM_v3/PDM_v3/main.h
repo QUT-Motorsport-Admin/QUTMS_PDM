@@ -30,7 +30,7 @@
 
 /* Shutdown - */
 #define HLchan2ON PORTH |= 64
-#define HLchan2OFF PORTH &= ~64		// Shutdown - On
+#define HLchan2OFF PORTH &= ~64		// Shutdown - On (0b01000000)
 
 #define HLchan3ON PORTG |= 32
 #define HLchan3OFF PORTG &= ~32

@@ -98,11 +98,11 @@ ISR(PCINT1_vect) {
 	uint8_t numBytes;
 	
 	CAN_pull_packet(POWER_CAN, &numBytes, data, &ID);
-
 	if (ID == CAN_ID_PDM) {
-		if(numBytes > 3)
-		{	
+		if(numBytes > 3) {	
 			greenON;
+		} else {
+			greenOFF;
 		}
 		/* Byte 1 */
 		if (CHECK_BIT(data[0], 0)) { /* Pump RHS */
@@ -136,9 +136,9 @@ ISR(PCINT1_vect) {
 			HC9OFF;
 		}
 		if (CHECK_BIT(data[0], 6)) { /* Shutdown - On */
-			HLchan2OFF;
+			HLchan2ON;
 		} else {
-			HLchan2ON; // Test?
+			HLchan2OFF; // Test?
 		}
 		if (CHECK_BIT(data[0], 7)) { /* Shutdown + On */
 			HC3ON;
