@@ -1,5 +1,6 @@
 #include "SPI.h"
 #include "MCP2515.h"
+#include "main.h"
 
 void MCP2515_init(uint8_t CANbus)
 {
@@ -19,7 +20,7 @@ void MCP2515_init(uint8_t CANbus)
 	MCP2515_reg_write(CANbus, MCP2515_CANINTE, 0b00000011);	//enable interrupt in rx0, rx1, tx0, tx1, tx2.
 	//MCP2515_reg_write(CANbus, MCP2515_CANINTF, 0b00011100);	//enable interrupt in rx0, rx1, tx0, tx1, tx2.
 	MCP2515_reg_write(CANbus, MCP2515_RTSCTRL, 0x01); //probably want to move this to a tx init function. eventually. if it aint broke don't fix it...
-	//MCP2515_init_Rx();
+	//MCP2515_init_Rx();	
 	MCP2515_bit_modify(CANbus, MCP2515_CANCTRL, MCP2515_MODE_ONESHOT | MCP2515_MODE_NORMAL, 0xE8);		//put the device into it's functional mode currently: 0x08 - normal mode with one shot
 	
 }
@@ -146,7 +147,7 @@ void MCP2515_PullCanPacket(uint8_t CANbus, uint8_t mob,uint8_t * numBytes , uint
 	{
 		tmpData[counter] = SPI_send_byte(0x00);
 	}
-
+	
 	*ID  = ((uint32_t)(tmpData[0]&0b11111111)<<21);
 	*ID |= ((uint32_t)(tmpData[1]&0b11100000)<<13);
 	*ID |= ((uint32_t)(tmpData[1]&0b00000011)<<16);

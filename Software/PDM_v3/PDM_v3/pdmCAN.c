@@ -7,6 +7,7 @@
 
 #include "pdmCAN.h"
 #include "MCP2515.h"
+#include "main.h"
 
 // Serves as a wrapper for MCP2515_TX in MCP2515_TX.h - for more info refer to that.
 void CAN_send(uint8_t CANbus, uint8_t numBytes, uint8_t * data, uint32_t ID) {
@@ -29,13 +30,14 @@ void CAN_pull_packet(uint8_t CANbus, uint8_t* numBytes, uint8_t* data, uint32_t*
 	uint8_t status = MCP2515_check_receive_status(CANbus);
 	// Check which receive buffer contains the data (or if both contain) by checking bits 7:6
 	switch(status>>6) {
-		case 1:	// Message in RXB0
+		case 1:	// Message in RXB0		
 			MCP2515_PullCanPacket(CANbus, MCP2515_RXB0SIDH, numBytes, data, ID);
 			break;
 		case 2: // Message in RXB1=
 			MCP2515_PullCanPacket(CANbus, MCP2515_RXB1SIDH, numBytes, data, ID);
 			break;
 		case 3: // Message in both buffers
+			//amberON;
 			MCP2515_PullCanPacket(CANbus, MCP2515_RXB0SIDH, numBytes, data, ID);
 			MCP2515_PullCanPacket(CANbus, MCP2515_RXB1SIDH, numBytes, data, ID);
 			break;

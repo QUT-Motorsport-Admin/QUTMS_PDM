@@ -25,7 +25,7 @@
 
 #define CAN_ID_INV	        0x0C000000 /**< CAN Bus Identifier for Inverters */
 #define	CAN_ID_AMU	        0x0A000000 /**< CAN Bus Identifier for AMU */
-#define CAN_ID_PDM	        0x09000000 /**< CAN Bus Identifier for PDM */
+//#define CAN_ID_PDM	        0x09000000 /**< CAN Bus Identifier for PDM */
 #define CAN_ID_WHEEL	    0x00400000 /**< CAN Bus Identifier for Wheel */
 
 /**

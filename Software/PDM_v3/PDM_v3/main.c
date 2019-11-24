@@ -24,9 +24,14 @@ int main(void) {
 
 	//Permanently energised boards
 	board_init();
-
+	
     while(1) {
-		/* Wait for CAN interrupts */
+		/* Wait for CAN interrupts */	
+		CAN_read_packet();
+		_delay_ms(100);
+		amberOFF;
+		greenOFF;
+		_delay_ms(100);
 	}
 }
 
@@ -85,6 +90,69 @@ void io_init(void) {
 	PORTL &= ~0b00111000;	//3 x PWMs off
 }
 
+void CAN_read_packet() {
+	uint8_t data[8];
+	uint32_t ID;
+	uint8_t numBytes;
+	amberON;
+	CAN_pull_packet(POWER_CAN, &numBytes, data, &ID);
+	if (ID == CAN_ID_PDM) {
+		if(numBytes > 3) {
+			greenON;
+			} else {
+			greenOFF;
+		}
+		/* Byte 1 */
+		if (CHECK_BIT(data[0], 0)) { /* Pump RHS */
+			HC4ON;
+			} else {
+			HC4OFF;
+		}
+		if (CHECK_BIT(data[0], 1)) { /* Fan RHS */
+			HC5ON;
+			} else {
+			HC5OFF;
+		}
+		if (CHECK_BIT(data[0], 2)) { /* Pump LHS */
+			HC6ON;
+			} else {
+			HC6OFF;
+		}
+		if (CHECK_BIT(data[0], 3)) { /* Fan LHS */
+			HC7ON;
+			} else {
+			HC7OFF;
+		}
+		if (CHECK_BIT(data[0], 4)) { /* Brake */
+			HLchan1ON;
+			} else {
+			HLchan1OFF;
+		}
+		if (CHECK_BIT(data[0], 5)) {  /* Siren */
+			HC9ON;
+			} else {
+			HC9OFF;
+		}
+		if (CHECK_BIT(data[0], 6)) { /* Shutdown - On */
+			HLchan2ON;
+			} else {
+			HLchan2OFF; // Test?
+		}
+		if (CHECK_BIT(data[0], 7)) { /* Shutdown + On */
+			HC3ON;
+			} else {
+			HC3OFF;
+		}
+		/* Byte 2 */
+
+		/* Byte 3 */
+
+		/* Byte 4 */
+
+		/* Byte 5 */
+	}
+}
+
 /**
  * @brief Called whenever CANBUS interrupt is triggered
  * CAN Packet 1
@@ -96,7 +164,7 @@ ISR(PCINT1_vect) {
 	uint8_t data[8];
 	uint32_t ID;
 	uint8_t numBytes;
-	
+	amberON;
 	CAN_pull_packet(POWER_CAN, &numBytes, data, &ID);
 	if (ID == CAN_ID_PDM) {
 		if(numBytes > 3) {	

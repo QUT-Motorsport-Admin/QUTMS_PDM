@@ -81,5 +81,6 @@ void firmware_init();
 void external_interrupt_init();
 void board_init();
 void pwm_init();
+void CAN_read_packet();
 
 #endif /* MAIN_H_ */
