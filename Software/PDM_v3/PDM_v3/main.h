@@ -36,8 +36,8 @@
 #define HLchan3OFF PORTG &= ~32
 
 /* Invertors */
-#define HLchan4ON PORTB |= 128		// Invertor Power On
-#define HLchan4OFF PORTB &= ~128	// Invertor Power Off
+#define HLchan4ON PORTB |= 128		// Inverter Power On
+#define HLchan4OFF PORTB &= ~128	// Inverter Power Off
 
 /* Chassis Controller */
 #define HC1ON PORTH |= 16;		// Chassis Controller On 
