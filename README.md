@@ -1,6 +1,6 @@
 ![QUTMS Banner](https://github.com/QUT-Motorsport/QUTMS_Master/blob/master/src/qutmsBanner.jpg?raw=true)
 
-# QUTMS_PDM
+# Power Distribution Module
 
 Main power distribution for high current devices on the car as well as control of the main LV power busses.
 
