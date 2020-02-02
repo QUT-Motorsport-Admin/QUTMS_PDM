@@ -1,1 +1,39 @@
-<mxfile host="www.draw.io" modified="2020-02-02T03:41:35.871Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36" version="12.6.2" etag="9Z3TVf1WO60_cz8sh57Q" type="github"><diagram id="Lloe-i_MsBtnCpfRcAaC">UzV2zq1wL0osyPDNT0nNUTV2VTV2LsrPL4GwciucU3NyVI0MMlNUjV1UjYwMgFjVyA2HrCFY1qAgsSg1rwSLBiADYTaQg2Y1AA==</diagram></mxfile>
+<mxfile host="www.draw.io" modified="2020-02-02T03:58:27.942Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36" etag="XFUtl8U7LpBxP3C8VI0f" version="12.6.2" type="github">
+  <diagram id="Lloe-i_MsBtnCpfRcAaC" name="Page-1">
+    <mxGraphModel dx="1422" dy="804" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="PS5Dt6cCRl9yGnN_7QB9-3" value="SPI" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="PS5Dt6cCRl9yGnN_7QB9-1" target="PS5Dt6cCRl9yGnN_7QB9-2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="PS5Dt6cCRl9yGnN_7QB9-5" value="PWM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;startArrow=none;startFill=0;" edge="1" parent="1" source="PS5Dt6cCRl9yGnN_7QB9-1" target="PS5Dt6cCRl9yGnN_7QB9-4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="PS5Dt6cCRl9yGnN_7QB9-7" value="PWM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;" edge="1" parent="1" source="PS5Dt6cCRl9yGnN_7QB9-1" target="PS5Dt6cCRl9yGnN_7QB9-6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="PS5Dt6cCRl9yGnN_7QB9-1" value="Microcontroller&lt;br&gt;(ATmega1280)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="360" y="554" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="PS5Dt6cCRl9yGnN_7QB9-2" value="CANBUS Communication&lt;br&gt;(MCP2515)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="360" y="440" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="PS5Dt6cCRl9yGnN_7QB9-4" value="Quad Half Bridge Outputs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="360" y="670" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="PS5Dt6cCRl9yGnN_7QB9-6" value="9 High Side Outputs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="560" y="554" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="PS5Dt6cCRl9yGnN_7QB9-10" value="ADC" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;" edge="1" parent="1" source="PS5Dt6cCRl9yGnN_7QB9-9" target="PS5Dt6cCRl9yGnN_7QB9-1">
+          <mxGeometry x="0.3478" relative="1" as="geometry">
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="PS5Dt6cCRl9yGnN_7QB9-9" value="2 Analog Inputs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="200" y="440" width="120" height="60" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
